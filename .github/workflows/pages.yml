@@ -29,8 +29,10 @@ jobs:
 
       - name: Prepare iOS icon
         run: |
-          python3 -m pip install --quiet pillow
-          python3 tool/ios_icon.py
+          python3 -m venv .venv-icons
+          . .venv-icons/bin/activate
+          python -m pip install --quiet pillow
+          python tool/ios_icon.py
 
       - name: Build unsigned iOS app
         run: |

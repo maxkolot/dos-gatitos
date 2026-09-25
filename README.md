@@ -33,6 +33,10 @@ python3 tool/icon.py --svg my_icon.svg               # нарисованный 
 python3 tool/icon.py --image https://example.com/cat.png
 ```
 
-Потом `repo_publish`. Название на экране «Домой» — `web/manifest.json` (`name`, `short_name`) и
-`apple-mobile-web-app-title` в `web/index.html`. На iPhone новая иконка появится после переустановки ярлыка
+Потом `repo_publish`. На iPhone новая иконка появится после переустановки ярлыка
 (удалить с экрана «Домой» и снова «На экран Домой») — iOS запоминает иконку при установке.
+
+## Название — одна правка
+
+`app.json`: `name` (в игре и во вкладке), `short_name` (подпись под иконкой на iPhone, до ~12 символов),
+`subtitle` (строка под названием в игре). Больше нигде менять не нужно — выкладка подставит его сама. Потом `repo_publish`.

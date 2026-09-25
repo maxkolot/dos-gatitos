@@ -8,7 +8,7 @@ class ScoreHud extends TextComponent with HasGameReference<DosGatitosGame> {
   ScoreHud()
       : super(
           text: 'Peces: 0',
-          position: Vector2(16, 48),
+          position: Vector2(16, 80),
           textRenderer: TextPaint(style: const TextStyle(color: Color(0xFFFFFFFF), fontSize: 24)),
         );
 

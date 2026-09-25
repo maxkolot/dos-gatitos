@@ -29,6 +29,7 @@ class Cats extends Component with HasGameReference<DosGatitosGame> {
 
   @override
   void update(double dt) {
+    targetX = targetX.clamp(40, max(40, game.size.x - 40));
     ginger.x += (targetX - ginger.x) * min(1, dt * 10);
     black.x += (ginger.x - 70 - black.x) * min(1, dt * 4);
     ginger.y = black.y = game.size.y - 60;

@@ -119,17 +119,23 @@ jobs:
                 "subtitle": "Sebastián & Maxito",
                 "localizedDescription": "Juego pixel cozy con Sebastián y Maxito.",
                 "iconURL": "https://maxkolot.github.io/dos-gatitos/icons/Icon-512.png",
-                "tintColor": "7D2448",
+                "tintColor": "#7D2448",
+                "category": "games",
                 "versions": [
                   {
                     "version": "1.0.0",
+                    "buildVersion": "1",
                     "date": "$RELEASE_DATE",
                     "localizedDescription": "Primera versión instalable.",
                     "downloadURL": "https://maxkolot.github.io/dos-gatitos/downloads/DosGatitos.ipa",
                     "size": $IPA_SIZE,
                     "minOSVersion": "15.0"
                   }
-                ]
+                ],
+                "appPermissions": {
+                  "entitlements": [],
+                  "privacy": {}
+                }
               }
             ],
             "news": []

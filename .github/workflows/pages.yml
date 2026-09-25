@@ -1,0 +1,39 @@
+# Every push to main publishes the game to GitHub Pages.
+# No package.json → the repo root is published as is; with a "build" script → npm ci && npm run build, dist/ is published.
+name: Deploy game
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build (only if package.json has a build script)
+        run: |
+          if [ -f package.json ] && node -e "process.exit(require('./package.json').scripts?.build ? 0 : 1)"; then
+            npm ci || npm install
+            npm run build
+            echo "SITE_DIR=dist" >> "$GITHUB_ENV"
+          else
+            mkdir -p _site
+            rsync -a --exclude .git --exclude .github --exclude _site ./ _site/
+            echo "SITE_DIR=_site" >> "$GITHUB_ENV"
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.SITE_DIR }}
+      - id: deployment
+        uses: actions/deploy-pages@v4

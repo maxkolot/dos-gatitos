@@ -22,7 +22,7 @@
 - Flame ≥1.38: ввод — миксины `TapCallbacks` / `DragCallbacks`; доступ к игре — `HasGameReference<DosGatitosGame>`.
 - Персонажи и предметы — спрайтами PNG в `assets/images/` (папка уже в `pubspec.yaml`), НЕ эмодзи-текстом: в веб-сборке
   глифов части эмодзи нет (котики были пустыми квадратами). Спрайт из эмодзи: `python3 tool/sprite.py --emoji "🐟" --out assets/images/fish.png`
-  (`--tint "#222222"` перекрасит). Звуки — в `assets/` + `pubspec.yaml`.
+  (`--tint "#222222"` перекрасит). Меняешь картинку — дай новое имя файла (старое кэшируется у игроков до 10 мин). Звуки — в `assets/` + `pubspec.yaml`.
 - Посмотреть игру глазами: `open_url` https://maxkolot.github.io/dos-gatitos/ + `screenshot`.
 
 ## Иконка — одной командой

@@ -57,6 +57,10 @@ jobs:
           [ -f app.json ] && [ -f tool/app_info.py ] && python3 tool/app_info.py "$SITE_DIR"
           echo "{\"build\":\"$GITHUB_SHA\"}" > "$SITE_DIR/build.json"
           [ -f "$SITE_DIR/index.html" ] && sed -i "s/__BUILD_ID__/$GITHUB_SHA/" "$SITE_DIR/index.html"
+          # cache busting: Pages caches files for 10 min, so code URLs carry the commit — an update is visible at once
+          [ -f "$SITE_DIR/index.html" ] && sed -i "s#flutter_bootstrap.js\"#flutter_bootstrap.js?v=$GITHUB_SHA\"#" "$SITE_DIR/index.html"
+          [ -f "$SITE_DIR/flutter_bootstrap.js" ] && sed -i "s#\"mainJsPath\":\"main.dart.js\"#\"mainJsPath\":\"main.dart.js?v=$GITHUB_SHA\"#" "$SITE_DIR/flutter_bootstrap.js"
+          true
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -20,7 +20,9 @@
 6. `repo_status {repo, role_id}` — твоя копия, очередь, итоги публикаций, выкладки. `git push` не нужен и не сработает.
 
 - Flame ≥1.38: ввод — миксины `TapCallbacks` / `DragCallbacks`; доступ к игре — `HasGameReference<DosGatitosGame>`.
-- Картинки/звуки — в `assets/` (+ прописать в `pubspec.yaml`), пути относительные.
+- Персонажи и предметы — спрайтами PNG в `assets/images/` (папка уже в `pubspec.yaml`), НЕ эмодзи-текстом: в веб-сборке
+  глифов части эмодзи нет (котики были пустыми квадратами). Спрайт из эмодзи: `python3 tool/sprite.py --emoji "🐟" --out assets/images/fish.png`
+  (`--tint "#222222"` перекрасит). Звуки — в `assets/` + `pubspec.yaml`.
 - Посмотреть игру глазами: `open_url` https://maxkolot.github.io/dos-gatitos/ + `screenshot`.
 
 ## Иконка — одной командой

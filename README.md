@@ -19,7 +19,7 @@
    `git pull`, поправь (сохрани и свою, и чужую логику), `git add`, `git rebase --continue`, `repo_publish` снова.
 6. `repo_status {repo, role_id}` — твоя копия, очередь, итоги публикаций, выкладки. `git push` не нужен и не сработает.
 
-- Flame ≥1.38: ввод — миксины `TapCallbacks` / `DragCallbacks`; до��туп к игре — `HasGameReference<DosGatitosGame>`.
+- Flame ≥1.38: ввод — миксины `TapCallbacks` / `DragCallbacks`; доступ к игре — `HasGameReference<DosGatitosGame>`.
 - Картинки/звуки — в `assets/` (+ прописать в `pubspec.yaml`), пути относительные.
 - Посмотреть игру глазами: `open_url` https://maxkolot.github.io/dos-gatitos/ + `screenshot`.
 

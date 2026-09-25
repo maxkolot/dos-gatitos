@@ -1,46 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
+  <!-- replaced by `flutter build web --base-href /dos-gatitos/` -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Dos Gatitos">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="description" content="Dos Gatitos — juego de dos gatitos">
+  <!-- GitHub Actions puts the commit sha here; the page compares it with build.json to offer updates -->
+  <meta name="build-id" content="__BUILD_ID__">
 
-  <!-- iOS meta tags & icons -->
+  <!-- installable on iPhone: Safari → Compartir → «En pantalla de inicio» -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="dos_gatitos">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dos Gatitos">
+  <meta name="theme-color" content="#1D1B2E">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>dos_gatitos</title>
+  <title>Dos Gatitos</title>
   <link rel="manifest" href="manifest.json">
+  <style>
+    html, body { margin: 0; height: 100%; background: #1D1B2E; overscroll-behavior: none; }
+    #update { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+      z-index: 10; display: none; border: 0; border-radius: 999px; padding: 12px 20px; background: #FFB02E; color: #1D1B2E;
+      font: 600 16px system-ui, -apple-system, sans-serif; box-shadow: 0 6px 24px rgba(0,0,0,.4); }
+  </style>
 </head>
 <body>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
-
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
+  <button id="update" onclick="location.reload()">🐾 Nueva versión — actualizar</button>
+  <script>
+    // new build on GitHub Pages → show the update button (checked on return to the app and every minute)
+    (function () {
+      var mine = document.querySelector('meta[name="build-id"]').content;
+      if (mine.indexOf('__') === 0) return; // local build
+      function check() {
+        fetch('build.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+          if (j.build && j.build !== mine) document.getElementById('update').style.display = 'block';
+        }).catch(function () {});
+      }
+      document.addEventListener('visibilitychange', function () { if (!document.hidden) check(); });
+      setInterval(check, 60000);
+    })();
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

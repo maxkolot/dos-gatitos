@@ -1,17 +1,38 @@
 # Dos Gatitos 🐈🐈‍⬛
 
-Браузерная игра про двух котиков на **Flutter + Flame**. Живая версия: https://maxkolot.github.io/dos-gatitos/
+Игра про двух котиков на **Flutter + Flame**. Живая версия: https://maxkolot.github.io/dos-gatitos/
 
-## Для ботов (@ИБИ)
+**Установить на iPhone:** открыть ссылку в Safari → «Поделиться» → «На экран Домой». Обновления приходят сами:
+при каждом запуске грузится свежая версия, а если игра была открыта — снизу появится кнопка «Nueva versión».
 
-- Код — на сервере «Котик Колот» в `/home/platina/projects/dos-gatitos`, правь через shell / write_file.
-  Игра — `lib/main.dart` (+ свои файлы в `lib/`), картинки/звуки — в `assets/` (пропиши их в `pubspec.yaml`).
-- Flutter 3.47.5 уже стоит на сервере (`flutter` в PATH). Пакеты: `flutter pub add <пакет>`.
-- **Перед публикацией обязательно проверь сборку:**
-  `flutter analyze && flutter build web --release --base-href /dos-gatitos/` (≈1 мин).
-  Если локально не собирается — на GitHub тоже не соберётся.
-- Публикация: инструмент `repo_publish` (repo `dos-gatitos`, message — что изменил) → commit + push → GitHub Actions
-  собирает и выкладывает на Pages, инструмент возвращает ссылку на прогон и на игру. Итог сборки — `repo_status`.
-  Сам `git push` из shell не сработает — ключ есть только у сервера.
-- Flame ≥1.38: ввод через миксины `TapCallbacks` / `DragCallbacks` (старые `TapDetector` / `PanDetector` удалены).
-- Чтобы посмотреть игру глазами: `open_url` на https://maxkolot.github.io/dos-gatitos/ и `screenshot`.
+## Для ботов (@ИБИ): до 8 ролей параллельно
+
+1. `repo_workspace {repo: "dos-gatitos", role_id}` — ТВОЯ копия репозитория (`/home/platina/projects/dos-gatitos/<роль>`).
+   Работай только в ней; чужие папки не трогай.
+2. Перед задачей — `git pull`. Коммить маленькими шагами (`git add -A && git commit -m ...`).
+3. **Своя фича — свой файл:** `lib/features/<фича>.dart` (один Component). Подключение — одна строка import и одна строка
+   в списке `lib/features/features.dart` (этот файл сливается построчно, параллельные добавления не конфликтуют).
+   `lib/game.dart`, `lib/cats.dart`, `pubspec.yaml` — общие: меняй минимально и только если без этого никак.
+4. Проверка: `flutter analyze` (Flutter 3.47.5 на сервере). Полную сборку делает очередь.
+5. `repo_publish {repo, role_id, message}` — очередь слияния: rebase на свежий main → сборка → push → GitHub Actions
+   выкладывает на Pages. Конфликт или ошибка сборки — в main ничего не попадёт, инструмент вернёт файлы/ошибки:
+   `git pull`, поправь (сохрани и свою, и чужую логику), `git add`, `git rebase --continue`, `repo_publish` снова.
+6. `repo_status {repo, role_id}` — твоя копия, очередь, итоги публикаций, выкладки. `git push` не нужен и не сработает.
+
+- Flame ≥1.38: ввод — миксины `TapCallbacks` / `DragCallbacks`; до��туп к игре — `HasGameReference<DosGatitosGame>`.
+- Картинки/звуки — в `assets/` (+ прописать в `pubspec.yaml`), пути относительные.
+- Посмотреть игру глазами: `open_url` https://maxkolot.github.io/dos-gatitos/ + `screenshot`.
+
+## Иконка — одной командой
+
+Единственный источник — `web/icon.png` (1024×1024), все размеры делаются при выкладке.
+
+```bash
+python3 tool/icon.py --emoji "🦁" --bg "#FF8FB1"   # эмодзи на цветном фоне
+python3 tool/icon.py --svg my_icon.svg               # нарисованный SVG
+python3 tool/icon.py --image https://example.com/cat.png
+```
+
+Потом `repo_publish`. Название на экране «Домой» — `web/manifest.json` (`name`, `short_name`) и
+`apple-mobile-web-app-title` в `web/index.html`. На iPhone новая иконка появится после переустановки ярлыка
+(удалить с экрана «Домой» и снова «На экран Домой») — iOS запоминает иконку при установке.

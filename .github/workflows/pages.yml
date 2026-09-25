@@ -1,4 +1,4 @@
-# Every push to main publishes the game to GitHub Pages.
+# Every push to main publishes the game to GitHub Pages (installable on iPhone from Safari, updates itself).
 # pubspec.yaml → Flutter web build (Flame); package.json with "build" → npm build, dist/; otherwise the repo root as is.
 name: Deploy game
 on:
@@ -25,7 +25,7 @@ jobs:
           if [ -f pubspec.yaml ]; then echo "KIND=flutter" >> "$GITHUB_ENV"
           elif [ -f package.json ] && node -e "process.exit(require('./package.json').scripts?.build ? 0 : 1)"; then echo "KIND=npm" >> "$GITHUB_ENV"
           else echo "KIND=static" >> "$GITHUB_ENV"; fi
-      # same Flutter version as on the «Котик Колот» server, so a local `flutter build web` there predicts this build
+      # same Flutter version as on the «Котик Колот» server, where the merge queue test-builds every change
       - if: env.KIND == 'flutter'
         uses: subosito/flutter-action@v2
         with:
@@ -48,6 +48,14 @@ jobs:
               rsync -a --exclude .git --exclude .github --exclude _site ./ _site/
               echo "SITE_DIR=_site" >> "$GITHUB_ENV" ;;
           esac
+      - name: Icons from web/icon.png + build id for the in-app update button
+        run: |
+          if [ -f web/icon.png ] && [ -f tool/icon.py ]; then
+            pip install --quiet pillow
+            python3 tool/icon.py --sizes "$SITE_DIR"
+          fi
+          echo "{\"build\":\"$GITHUB_SHA\"}" > "$SITE_DIR/build.json"
+          [ -f "$SITE_DIR/index.html" ] && sed -i "s/__BUILD_ID__/$GITHUB_SHA/" "$SITE_DIR/index.html"
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

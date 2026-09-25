@@ -1,0 +1,2 @@
+# the feature registry is append-only: parallel bots each add a line, git keeps both instead of conflicting
+lib/features/features.dart merge=union

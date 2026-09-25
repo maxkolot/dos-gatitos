@@ -1,5 +1,5 @@
 # Every push to main publishes the game to GitHub Pages.
-# No package.json → the repo root is published as is; with a "build" script → npm ci && npm run build, dist/ is published.
+# pubspec.yaml → Flutter web build (Flame); package.json with "build" → npm build, dist/; otherwise the repo root as is.
 name: Deploy game
 on:
   push:
@@ -20,17 +20,34 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Build (only if package.json has a build script)
+      - name: Detect project type
         run: |
-          if [ -f package.json ] && node -e "process.exit(require('./package.json').scripts?.build ? 0 : 1)"; then
-            npm ci || npm install
-            npm run build
-            echo "SITE_DIR=dist" >> "$GITHUB_ENV"
-          else
-            mkdir -p _site
-            rsync -a --exclude .git --exclude .github --exclude _site ./ _site/
-            echo "SITE_DIR=_site" >> "$GITHUB_ENV"
-          fi
+          if [ -f pubspec.yaml ]; then echo "KIND=flutter" >> "$GITHUB_ENV"
+          elif [ -f package.json ] && node -e "process.exit(require('./package.json').scripts?.build ? 0 : 1)"; then echo "KIND=npm" >> "$GITHUB_ENV"
+          else echo "KIND=static" >> "$GITHUB_ENV"; fi
+      # same Flutter version as on the «Котик Колот» server, so a local `flutter build web` there predicts this build
+      - if: env.KIND == 'flutter'
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.5
+          channel: stable
+          cache: true
+      - name: Build
+        run: |
+          case "$KIND" in
+            flutter)
+              flutter pub get
+              flutter build web --release --base-href "/${{ github.event.repository.name }}/"
+              echo "SITE_DIR=build/web" >> "$GITHUB_ENV" ;;
+            npm)
+              npm ci || npm install
+              npm run build
+              echo "SITE_DIR=dist" >> "$GITHUB_ENV" ;;
+            *)
+              mkdir -p _site
+              rsync -a --exclude .git --exclude .github --exclude _site ./ _site/
+              echo "SITE_DIR=_site" >> "$GITHUB_ENV" ;;
+          esac
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

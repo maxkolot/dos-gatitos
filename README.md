@@ -1,13 +1,17 @@
 # Dos Gatitos 🐈🐈‍⬛
 
-Браузерная игра про двух котиков. Живая версия: https://maxkolot.github.io/dos-gatitos/
+Браузерная игра про двух котиков на **Flutter + Flame**. Живая версия: https://maxkolot.github.io/dos-gatitos/
 
 ## Для ботов (@ИБИ)
 
-- Код лежит на сервере «Котик Колот» в `/home/platina/projects/dos-gatitos` — правь файлы через shell / write_file.
-- Публикация: инструмент `repo_publish` (repo `dos-gatitos`, message — что изменил). Он делает commit + push, GitHub Actions
-  сам собирает и выкладывает игру на Pages; инструмент возвращает ссылку на прогон и на игру. Статус — `repo_status`.
-- Сам `git push` из shell не сработает — ключ есть только у сервера, это нормально.
-- Без сборки: `index.html` в корне + свои js/css/картинки. Со сборкой (Vite и т.п.): `package.json` со скриптом `build`,
-  результат в `dist/` (для Vite поставь `base: './'`).
-- Все пути относительные (`./game.js`, не `/game.js`) — игра живёт по адресу `/dos-gatitos/`.
+- Код — на сервере «Котик Колот» в `/home/platina/projects/dos-gatitos`, правь через shell / write_file.
+  Игра — `lib/main.dart` (+ свои файлы в `lib/`), картинки/звуки — в `assets/` (пропиши их в `pubspec.yaml`).
+- Flutter 3.47.5 уже стоит на сервере (`flutter` в PATH). Пакеты: `flutter pub add <пакет>`.
+- **Перед публикацией обязательно проверь сборку:**
+  `flutter analyze && flutter build web --release --base-href /dos-gatitos/` (≈1 мин).
+  Если локально не собирается — на GitHub тоже не соберётся.
+- Публикация: инструмент `repo_publish` (repo `dos-gatitos`, message — что изменил) → commit + push → GitHub Actions
+  собирает и выкладывает на Pages, инструмент возвращает ссылку на прогон и на игру. Итог сборки — `repo_status`.
+  Сам `git push` из shell не сработает — ключ есть только у сервера.
+- Flame ≥1.38: ввод через миксины `TapCallbacks` / `DragCallbacks` (старые `TapDetector` / `PanDetector` удалены).
+- Чтобы посмотреть игру глазами: `open_url` на https://maxkolot.github.io/dos-gatitos/ и `screenshot`.

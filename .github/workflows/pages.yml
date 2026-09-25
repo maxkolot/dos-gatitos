@@ -1,38 +1,82 @@
-# Every push to main publishes the game to GitHub Pages (installable on iPhone from Safari, updates itself).
-# pubspec.yaml → Flutter web build (Flame); package.json with "build" → npm build, dist/; otherwise the repo root as is.
+# Build the installable iOS IPA and publish the web game + AltStore/SideStore source.
 name: Deploy game
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: pages
   cancel-in-progress: true
+
 jobs:
+  build_ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.5
+          channel: stable
+          cache: true
+
+      - name: Prepare iOS icon
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 tool/ios_icon.py
+
+      - name: Build unsigned iOS app
+        run: |
+          flutter pub get
+          flutter build ios --release --no-codesign
+
+      - name: Package IPA for AltStore / SideStore
+        run: |
+          mkdir -p out/Payload
+          cp -R build/ios/iphoneos/Runner.app out/Payload/
+          cd out
+          /usr/bin/zip -qry DosGatitos.ipa Payload
+          rm -rf Payload
+          ls -lh DosGatitos.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dos-gatitos-ios
+          path: out/DosGatitos.ipa
+          if-no-files-found: error
+          retention-days: 2
+
   deploy:
+    needs: build_ios
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Detect project type
         run: |
           if [ -f pubspec.yaml ]; then echo "KIND=flutter" >> "$GITHUB_ENV"
           elif [ -f package.json ] && node -e "process.exit(require('./package.json').scripts?.build ? 0 : 1)"; then echo "KIND=npm" >> "$GITHUB_ENV"
           else echo "KIND=static" >> "$GITHUB_ENV"; fi
-      # same Flutter version as on the «Котик Колот» server, where the merge queue test-builds every change
+
       - if: env.KIND == 'flutter'
         uses: subosito/flutter-action@v2
         with:
           flutter-version: 3.47.5
           channel: stable
           cache: true
-      - name: Build
+
+      - name: Build web app
         run: |
           case "$KIND" in
             flutter)
@@ -48,7 +92,50 @@ jobs:
               rsync -a --exclude .git --exclude .github --exclude _site ./ _site/
               echo "SITE_DIR=_site" >> "$GITHUB_ENV" ;;
           esac
-      - name: Icons from web/icon.png, name from app.json, build id for the in-app update button
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dos-gatitos-ios
+          path: ios-artifact
+
+      - name: Add IPA and AltStore source
+        run: |
+          mkdir -p "$SITE_DIR/downloads"
+          cp ios-artifact/DosGatitos.ipa "$SITE_DIR/downloads/DosGatitos.ipa"
+          IPA_SIZE="$(stat -c%s "$SITE_DIR/downloads/DosGatitos.ipa")"
+          RELEASE_DATE="$(date -u +%Y-%m-%d)"
+          cat > "$SITE_DIR/altstore.json" <<EOF
+          {
+            "name": "Dos Gatitos",
+            "identifier": "com.maxkolot.dosgatitos.source",
+            "sourceURL": "https://maxkolot.github.io/dos-gatitos/altstore.json",
+            "apps": [
+              {
+                "name": "Dos Gatitos",
+                "bundleIdentifier": "com.maxkolot.dosGatitos",
+                "developerName": "Max Kolot",
+                "subtitle": "Sebastián & Maxito",
+                "localizedDescription": "Juego pixel cozy con Sebastián y Maxito.",
+                "iconURL": "https://maxkolot.github.io/dos-gatitos/icons/Icon-512.png",
+                "tintColor": "7D2448",
+                "versions": [
+                  {
+                    "version": "1.0.0",
+                    "date": "$RELEASE_DATE",
+                    "localizedDescription": "Primera versión instalable.",
+                    "downloadURL": "https://maxkolot.github.io/dos-gatitos/downloads/DosGatitos.ipa",
+                    "size": $IPA_SIZE,
+                    "minOSVersion": "15.0"
+                  }
+                ]
+              }
+            ],
+            "news": []
+          }
+          EOF
+          python3 -m json.tool "$SITE_DIR/altstore.json" >/dev/null
+
+      - name: Icons, app name and build id
         run: |
           if [ -f web/icon.png ] && [ -f tool/icon.py ]; then
             pip install --quiet pillow
@@ -57,13 +144,15 @@ jobs:
           [ -f app.json ] && [ -f tool/app_info.py ] && python3 tool/app_info.py "$SITE_DIR"
           echo "{\"build\":\"$GITHUB_SHA\"}" > "$SITE_DIR/build.json"
           [ -f "$SITE_DIR/index.html" ] && sed -i "s/__BUILD_ID__/$GITHUB_SHA/" "$SITE_DIR/index.html"
-          # cache busting: Pages caches files for 10 min, so code URLs carry the commit — an update is visible at once
           [ -f "$SITE_DIR/index.html" ] && sed -i "s#flutter_bootstrap.js\"#flutter_bootstrap.js?v=$GITHUB_SHA\"#" "$SITE_DIR/index.html"
           [ -f "$SITE_DIR/flutter_bootstrap.js" ] && sed -i "s#\"mainJsPath\":\"main.dart.js\"#\"mainJsPath\":\"main.dart.js?v=$GITHUB_SHA\"#" "$SITE_DIR/flutter_bootstrap.js"
           true
+
       - uses: actions/configure-pages@v5
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ${{ env.SITE_DIR }}
+
       - id: deployment
         uses: actions/deploy-pages@v4

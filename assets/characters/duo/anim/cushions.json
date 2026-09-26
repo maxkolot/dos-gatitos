@@ -6,7 +6,7 @@
     "cushions_4.webp",
     "cushions_5.webp"
   ],
-  "fps": 0.3,
+  "fps": 0.16,
   "loop": true,
   "hold": 1.5,
   "width": 966,
@@ -65,5 +65,15 @@
         21.3
       ]
     ]
+  ],
+  "sequence": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    3,
+    2,
+    1
   ]
 }

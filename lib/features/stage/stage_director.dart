@@ -75,6 +75,8 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     _toast = loaded[3];
     _cushions = loaded[4];
     _dinner = loaded[5];
+    _nextChat = 60;
+    _playLines(_hello[_rnd.nextInt(_hello.length)], after: 6); // after the splash
     _hug = loaded[6];
   }
 
@@ -101,13 +103,18 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
         _musicTime();
       case TamagotchiAction.servirVino:
         _stopAll();
-        duoAnim.play(_toast);
-        _pair(_pick(_wineSeb), _pick(_wineMax), first: LineSpeaker.sebastian);
-        _burst(4, delay: 4.5);
+        final seconds = _playLines(_wineChats[_rnd.nextInt(_wineChats.length)]);
+        duoAnim.play(_toast, seconds: seconds + 1.5); // they sip and clink the whole conversation
+        _burst(4, delay: 6);
       case TamagotchiAction.hablar:
         _stopAll();
-        final seconds = startChat();
-        duoAnim.play(_cushions, seconds: seconds + 0.5);
+        // a long talk on the cushions: two conversations in a row
+        final first = _rnd.nextInt(kJointDialogues.length);
+        var second = _rnd.nextInt(kJointDialogues.length - 1);
+        if (second >= first) second++;
+        var seconds = startChat(dialogue: kJointDialogues[first]);
+        seconds = startChat(dialogue: kJointDialogues[second], after: seconds + 1.2);
+        duoAnim.play(_cushions, seconds: seconds + 1);
       case TamagotchiAction.darUnAbrazo:
         _stopAll();
         duoAnim.play(_hug);
@@ -162,22 +169,50 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
 
   /// A joint conversation from the events catalogue (R18), line by line.
   /// Returns how long it lasts (seconds).
-  double startChat([JointDialogue? dialogue]) {
+  double startChat({JointDialogue? dialogue, double after = 0}) {
     final d = dialogue ?? kJointDialogues[_rnd.nextInt(kJointDialogues.length)];
-    final begin = _clock + 0.3;
+    return _playLines(
+      [
+        for (final line in d.lines)
+          if (line.speaker != LineSpeaker.ambiente)
+            (line.speaker, line.speaker == LineSpeaker.sebastian ? _withRussian(line.text) : line.text, line.interruptsPrevious),
+      ],
+      after: after,
+    );
+  }
+
+  /// Lines one after another (a cut-in starts before the previous one ends).
+  /// Returns how long it lasts (seconds, counted from now).
+  double _playLines(List<(LineSpeaker, String, bool)> lines, {double after = 0}) {
+    final begin = _clock + 0.3 + after;
     var at = begin;
     var last = begin;
     double? prevDur;
-    for (final line in d.lines) {
-      if (line.speaker == LineSpeaker.ambiente) continue;
-      final dur = _durationOf(line.text);
-      if (prevDur != null && line.interruptsPrevious) at -= prevDur * 0.4; // cuts in
-      _bubbles.add(_Bubble(line.speaker, line.text, start: at, end: at + dur));
+    for (final (who, text, cutsIn) in lines) {
+      final dur = _durationOf(text);
+      if (prevDur != null && cutsIn) at -= prevDur * 0.4;
+      _bubbles.add(_Bubble(who, text, start: at, end: at + dur));
       last = math.max(last, at + dur);
       at += dur + 0.7;
       prevDur = dur;
     }
     return last - _clock;
+  }
+
+  /// Sebastián picked up Russian from Maxito and throws it in every now and then.
+  String _withRussian(String text) {
+    final roll = _rnd.nextDouble();
+    if (roll < 0.14) return '${_pick(const ['Da, ', 'Da, da… ', 'Blyat, ', 'Suka… ', 'Privet… '])}${_lowerFirst(text)}';
+    if (roll < 0.26) return '$text ${_pick(const ['Spasibo.', 'Da.', 'Blyat.', 'Suka.'])}';
+    return text;
+  }
+
+  String _lowerFirst(String s) {
+    if (s.isEmpty) return s;
+    final first = s[0];
+    // keep «¿¡» and names as they are
+    if ('¿¡'.contains(first) || s.startsWith('Maxito') || s.startsWith('Sebas')) return s;
+    return first.toLowerCase() + s.substring(1);
   }
 
   void say(LineSpeaker who, String text, {double delay = 0}) {
@@ -307,12 +342,58 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
   // what they say for each action (Sebastián: rioplatense «vos», Maxito: neutral)
   // ---------------------------------------------------------------------------
 
-  static const _wineSeb = ['¿Una copita de garnacha?', 'Abrí el Priorat que trajimos.', '¿Vino? Dale, es viernes en algún lado.'];
-  static const _wineMax = ['Siempre. Hasta arriba, porfa.', 'Solo una. Bueno, dos.', 'Brindemos por nosotros, gatito.'];
+
+  static const _s = LineSpeaker.sebastian;
+  static const _m = LineSpeaker.maxito;
+
+  /// Wine: a whole conversation while they clink and sip.
+  static const List<List<(LineSpeaker, String, bool)>> _wineChats = [
+    [
+      (_s, '¡Privet! ¿Abrimos el tinto?', false),
+      (_m, 'Da. Pero el bueno, no el del súper.', false),
+      (_s, 'Da, da… el Priorat. Spasibo por acordarte.', false),
+      (_m, 'Tu ruso mejora con cada copa.', false),
+      (_s, 'Blyat, se me cayó una gota en la camisa.', false),
+      (_m, 'Esa camisa ya vio cosas peores.', true),
+      (_s, 'Suka… tenés razón.', false),
+    ],
+    [
+      (_m, 'Brindemos por Barcelona.', false),
+      (_s, 'Y por vos. ¡Na zdorovie! ¿Así se dice?', false),
+      (_m, 'Casi. Sonó como si pidieras un taxi.', false),
+      (_s, 'Da. Un taxi directo a tu corazón.', false),
+      (_m, 'Qué cursi sos, Sebas.', false),
+      (_s, 'Spasibo. Lo aprendí de vos.', false),
+    ],
+    [
+      (_s, 'Este vino está increíble, blyat.', false),
+      (_m, '¡No digas eso con la boca llena de vino!', true),
+      (_s, 'Da, da. Perdón. Spasibo por servirlo.', false),
+      (_m, 'Otra copa y me recitás a Pushkin.', false),
+      (_s, 'Privet, Pushkin. Listo, ya lo recité.', false),
+      (_m, 'Te amo, idiota.', false),
+      (_s, 'Da.', false),
+    ],
+    [
+      (_m, '¿Te acordás de nuestra primera copa?', false),
+      (_s, 'En el Born, con aquel camarero que no nos entendía.', false),
+      (_m, 'Porque le pediste vino en ruso.', false),
+      (_s, 'Le dije «privet» y «spasibo». Suka, era perfecto.', false),
+      (_m, 'Y después le dijiste «blyat» a la cuenta.', true),
+      (_s, 'Da. La cuenta se lo merecía.', false),
+    ],
+  ];
+
+  /// When the game opens.
+  static const List<List<(LineSpeaker, String, bool)>> _hello = [
+    [(_s, '¡Privet, Maxito!', false), (_m, '¡Privet, Sebas! Tu acento es un desastre.', false), (_s, 'Da. Pero es mi desastre.', false)],
+    [(_m, 'Llegó alguien… ¡hola!', false), (_s, '¡Privet! Pasá, que hay vino.', false)],
+    [(_s, 'Da, da, ya sé: llegaste. Privet.', false), (_m, 'Qué recibimiento más cálido.', false)],
+  ];
   static const _hugMax = ['Vení acá, gatito.', 'Abrazo obligatorio, ya.', 'Te extrañé todo el día.'];
-  static const _hugSeb = ['Cinco minutos más así.', 'Olés a vino y a casa.', 'No me sueltes, eh.'];
+  static const _hugSeb = ['Cinco minutos más así.', 'Olés a vino y a casa.', 'No me sueltes, eh.', 'Spasibo, gatito.', 'Da… así, quedate.'];
   static const _playMax = ['¡Te persigo por el pasillo!', '¡El que pierde lava los platos!', '¿Carrera hasta el balcón?'];
-  static const _playSeb = ['Con estas zapatillas no me alcanzás.', 'Hacés trampa, siempre.', 'Dale, pero sin morder.'];
+  static const _playSeb = ['Con estas zapatillas no me alcanzás.', 'Hacés trampa, siempre.', 'Dale, pero sin morder.', '¡Blyat, sos rapidísimo!', 'Suka… me ganaste otra vez.'];
 }
 
 class _Bubble {

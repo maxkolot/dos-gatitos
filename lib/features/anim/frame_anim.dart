@@ -18,6 +18,7 @@ class FrameAnimData {
     required this.centerX,
     this.heads = const [],
     this.duoHeads = const [],
+    this.sequence,
   });
 
   final List<ui.Image> frames;
@@ -38,6 +39,9 @@ class FrameAnimData {
   /// Duo scenes: [Sebastián's head, Maxito's head] per frame (frame pixels).
   final List<List<ui.Offset>> duoHeads;
 
+  /// Optional order of the frames (e.g. there and back again for slow talk scenes).
+  final List<int>? sequence;
+
   /// Head top of frame [i] inside the idle sprite box (see [paintAnimFrame]).
   ui.Offset? headInBox(int i, double boxWidth, double boxHeight) {
     if (heads.isEmpty) return null;
@@ -46,7 +50,7 @@ class FrameAnimData {
     return ui.Offset(boxWidth / 2 + (h.dx - centerX) * k, boxHeight - (feetY - h.dy) * k);
   }
 
-  double get oneShotSeconds => frames.length / fps + hold;
+  double get oneShotSeconds => (sequence?.length ?? frames.length) / fps + hold;
 
   /// `dir/name.json` + its frames. `null` (and a log line) when missing.
   static Future<FrameAnimData?> load(String dir, String name) async {
@@ -72,6 +76,7 @@ class FrameAnimData {
           for (final p in (meta['heads'] as List? ?? const []))
             ui.Offset(((p as List)[0] as num).toDouble(), (p[1] as num).toDouble()),
         ],
+        sequence: (meta['sequence'] as List?)?.map((e) => (e as num).toInt()).toList(),
         duoHeads: [
           for (final pair in (meta['duoHeads'] as List? ?? const []))
             [
@@ -134,8 +139,11 @@ class FramePlayer {
   int get frameIndex {
     final d = _data;
     if (d == null || d.frames.isEmpty) return 0;
-    final i = (_t * d.fps).floor();
-    return d.loop ? i % d.frames.length : math.min(i, d.frames.length - 1);
+    final seq = d.sequence;
+    final n = seq?.length ?? d.frames.length;
+    var i = (_t * d.fps).floor();
+    i = d.loop ? i % n : math.min(i, n - 1);
+    return (seq != null ? seq[i] : i).clamp(0, d.frames.length - 1);
   }
 
   ui.Image? get frame {

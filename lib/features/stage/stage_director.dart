@@ -10,6 +10,7 @@ import '../../game.dart';
 import '../anim/frame_anim.dart';
 import '../audio/music.dart';
 import '../characters/maxito/maxito_state.dart';
+import '../characters/name_tag.dart';
 import '../characters/sebastian/sebastian_character.dart';
 import '../events/dialogues.dart';
 import '../events/models.dart';
@@ -65,6 +66,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
   /// Runs an action: stats (Tamagotchi core) + what the player sees and hears.
   ActionResult? act(TamagotchiAction action, {String? conQuien}) {
     final result = tamagotchi.activar(action, conQuien: conQuien);
+    _bubbles.clear(); // an action interrupts whatever they were chatting about
     _nextChat = _clock + 30; // an action is a conversation of its own
     switch (action) {
       case TamagotchiAction.ponerMusica:
@@ -210,11 +212,14 @@ class _Bubble {
   final double start;
   final double end;
   TextPainter? _tp;
+  bool _laidOutWithFont = false;
 
   static const _paper = Color(0xFFFFF6E6);
   static const _ink = Color(0xFF2B1830);
 
   ui.Rect paint(ui.Canvas canvas, ui.Offset head, double screenW, List<ui.Rect> placed, double clock) {
+    if (!_laidOutWithFont && NameTag.fontReady) _tp = null; // the pixel font arrived: lay out again
+    _laidOutWithFont = NameTag.fontReady;
     final tp = _tp ??= TextPainter(
       text: TextSpan(
         text: text,

@@ -12,8 +12,13 @@ class NameTag {
     _fontReady.then((_) => refresh(), onError: (_) {});
   }
 
+  /// true once the pixel font is there (others relayout their text then too).
+  static bool fontReady = false;
+
+  static void _markReady() => fontReady = true;
+
   static final Future<void> _fontReady =
-      GoogleFonts.pendingFonts([GoogleFonts.pixelifySans(fontWeight: FontWeight.w600)]);
+      GoogleFonts.pendingFonts([GoogleFonts.pixelifySans(fontWeight: FontWeight.w600)])..then((_) => _markReady(), onError: (_) {});
 
   final String name;
 

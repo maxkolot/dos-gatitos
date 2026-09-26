@@ -9,6 +9,7 @@ enum TamagotchiAction {
   darUnAbrazo,
   jugar,
   cenar,
+  dormir,
   preguntar,
 }
 
@@ -138,6 +139,17 @@ const Map<TamagotchiAction, ActionSpec> catalogoAcciones =
           StatKind.social: 4,
         },
         conexion: 4,
+      ),
+      TamagotchiAction.dormir: ActionSpec(
+        labelEs: 'Dormir',
+        descripcionEs: 'Ocho horas abrazados en el sofá cama: se despiertan nuevos.',
+        icono: 'bedtime',
+        deltas: <StatKind, double>{
+          StatKind.energia: 60,
+          StatKind.animo: 6,
+          StatKind.carino: 3,
+        },
+        conexion: 3,
       ),
       TamagotchiAction.preguntar: ActionSpec(
         labelEs: 'Preguntar',

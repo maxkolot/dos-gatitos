@@ -7,8 +7,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'app_state.dart';
 import 'features/audio/music.dart';
+import 'features/sleep/sleep.dart';
 import 'game.dart';
 import 'ui/game_hud.dart';
+import 'ui/sleep_scene.dart';
 import 'ui/ready_signal.dart';
 import 'ui/splash_overlay.dart';
 
@@ -25,7 +27,8 @@ final Future<void> appReady = Future.wait<void>([
   gameLoaded.future,
   GoogleFonts.pendingFonts([GoogleFonts.pixelifySans(fontWeight: FontWeight.w600)]).then((_) {}, onError: (_) {}),
   Music.instance.preload(),
-]).timeout(const Duration(seconds: 12), onTimeout: () => const []).then((_) {
+]).timeout(const Duration(seconds: 12), onTimeout: () => const []).then((_) async {
+  await Sleep.instance.load(); // still night → countdown; morning → they wake up
   signalReady(); // web: the HTML video splash fades out
   // the native apps may start the music right away; browsers need a first touch
   if (!kIsWeb) unawaited(Music.instance.start());
@@ -55,6 +58,7 @@ class DosGatitosApp extends StatelessWidget {
                 ),
               ),
               const Positioned.fill(child: GameHud()),
+              const Positioned.fill(child: SleepScene()),
               if (!hasHtmlSplash) Positioned.fill(child: SplashOverlay(ready: appReady)),
             ],
           ),

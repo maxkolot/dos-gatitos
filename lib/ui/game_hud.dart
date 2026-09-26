@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../app_state.dart';
 import '../features/audio/music.dart';
+import '../features/sleep/sleep.dart';
 import '../features/characters/maxito/maxito_state.dart';
 import '../features/characters/sebastian/sebastian_character.dart';
 import '../features/stage/stage_director.dart';
@@ -131,6 +132,15 @@ class _StatsPanel extends StatelessWidget {
           _Bond(value: tamagotchi.conexion),
           const SizedBox(width: 8),
           Expanded(child: _PetStats(name: 'Maxito', color: _maxColor, stats: tamagotchi.maxito)),
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            tooltip: 'Dormir (8 horas)',
+            onPressed: () {
+              Music.instance.start();
+              Sleep.instance.start();
+            },
+            icon: const Icon(Icons.nightlight_round, color: _gold, size: 20),
+          ),
           ListenableBuilder(
             listenable: Music.instance,
             builder: (context, _) => IconButton(

@@ -15,6 +15,7 @@ import '../characters/sebastian/sebastian_character.dart';
 import '../events/dialogues.dart';
 import '../events/models.dart';
 import '../room/room_layout.dart';
+import '../sleep/sleep.dart';
 import '../tamagotchi/tamagotchi.dart';
 
 /// Who is on screen, what they play and say: runs the HUD actions (animations,
@@ -76,6 +77,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     _cushions = loaded[4];
     _dinner = loaded[5];
     _nextChat = 60;
+    Sleep.instance.onWake = _goodMorning;
     _playLines(_hello[_rnd.nextInt(_hello.length)], after: 6); // after the splash
     _hug = loaded[6];
   }
@@ -124,8 +126,9 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
         _pair(_pick(_playMax), _pick(_playSeb), first: LineSpeaker.maxito);
       case TamagotchiAction.cenar:
         _dinnerTime();
+      case TamagotchiAction.dormir:
       case TamagotchiAction.preguntar:
-        break; // the HUD opens the question flow
+        break; // bedtime runs its own scene; «Preguntar» is the HUD's question flow
     }
     return result;
   }
@@ -139,6 +142,14 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
       say(LineSpeaker.maxito, _pick(const ['¡Temazo!', 'Esta es para vos, Sebas.', '¡A bailar!']));
       sebastianAnim.play(_dance, seconds: 34, onDone: () => Music.instance.play('casa'));
     });
+  }
+
+  /// After the night (or «Saltar»): back in the flat, rested.
+  void _goodMorning() {
+    _stopAll();
+    _bubbles.clear();
+    _nextChat = _clock + 40;
+    _playLines(_morning[_rnd.nextInt(_morning.length)], after: 1.2);
   }
 
   /// Sebastián makes milanesas a la napolitana, then they eat them together.
@@ -298,7 +309,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     _hearts.removeWhere((h) => _clock > h.born + 1.8);
 
     // they chat by themselves now and then, standing where they are, when nothing else is going on
-    if (_clock > _nextChat && !_busy && !_someoneFocused) {
+    if (_clock > _nextChat && !_busy && !_someoneFocused && !Sleep.instance.active) {
       startChat();
       _nextChat = _clock + 45 + _rnd.nextDouble() * 30;
     }
@@ -382,6 +393,13 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
       (_m, 'Y después le dijiste «blyat» a la cuenta.', true),
       (_s, 'Da. La cuenta se lo merecía.', false),
     ],
+  ];
+
+  /// Good morning.
+  static const List<List<(LineSpeaker, String, bool)>> _morning = [
+    [(_m, '¡Buen día, dormilón!', false), (_s, 'Privet… ¿ya es de día? Blyat.', false), (_m, 'Café. Ahora.', false), (_s, 'Da, da. Spasibo.', false)],
+    [(_s, '¡Buen día! Dormí como un gato.', false), (_m, 'Porque sos un gato.', false), (_s, 'Da. Un gato con hambre.', false)],
+    [(_m, 'Me robaste toda la manta otra vez.', false), (_s, 'Suka… no me acuerdo de nada.', false), (_m, 'Qué conveniente.', true)],
   ];
 
   /// When the game opens.

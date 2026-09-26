@@ -66,6 +66,7 @@ flutter:
     - assets/characters/duo/anim/
     - assets/audio/
     - assets/splash/
+    - assets/sleep/
     - assets/characters/maxito/
     - assets/room/
 

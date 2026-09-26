@@ -15,6 +15,7 @@ class Music extends ChangeNotifier {
   String _track = 'casa';
   bool _started = false;
   bool _muted = false;
+  bool _night = false;
 
   bool get muted => _muted;
   String get track => _track;
@@ -49,6 +50,23 @@ class Music extends ChangeNotifier {
     if (_started) await _playCurrent();
   }
 
+  /// They sleep: silence until the morning.
+  Future<void> pauseForNight() async {
+    _night = true;
+    try {
+      await _player?.pause();
+    } catch (e) {
+      debugPrint('Music: $e');
+    }
+  }
+
+  Future<void> resumeAfterNight() async {
+    _night = false;
+    _track = 'casa';
+    notifyListeners();
+    if (_started) await _playCurrent();
+  }
+
   Future<void> toggleMute() async {
     _muted = !_muted;
     notifyListeners();
@@ -65,7 +83,7 @@ class Music extends ChangeNotifier {
   }
 
   Future<bool> _playCurrent() async {
-    if (_muted) return true;
+    if (_muted || _night) return true;
     try {
       await _p.stop();
       await _p.play(AssetSource('audio/$_track.mp3'), volume: _track == 'baile' ? 0.6 : 0.5);

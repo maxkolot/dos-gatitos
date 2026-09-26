@@ -155,7 +155,7 @@ void main() {
     final loop = TamagotchiLoop(store: MemoriaTamagotchiStore(), reloj: reloj);
     await loop.cargar();
 
-    expect(loop.acciones.length, 7);
+    expect(loop.acciones.length, 8);
     expect(
       loop.acciones.map((a) => loop.spec(a).labelEs),
       contains('Dar un abrazo'),

@@ -148,7 +148,7 @@ class _MiniGameScreenState extends State<_MiniGameScreen> {
         Text('¡Atrapá las gallinas!', style: _px(24, _gold), textAlign: TextAlign.center),
         const SizedBox(height: 10),
         Text(
-          'Tocá una gallina y Sebas salta.\nCorren: apuntá un poquito adelante.\nLa dorada vale 5.',
+          'Tocá la pantalla y Sebas salta\na la gallina más cercana.\nCuando tiene el círculo dorado, ¡es tuya!\nLa dorada vale 5.',
           style: _px(15),
           textAlign: TextAlign.center,
         ),

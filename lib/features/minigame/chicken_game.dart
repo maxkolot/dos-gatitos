@@ -10,9 +10,10 @@ import 'package:flutter/painting.dart';
 /// «Atrapá las gallinas»: black-cat Sebastián on a Barcelona rooftop.
 ///
 /// Chickens run across the terrace (sometimes they hop, they panic when the cat
-/// comes close, a rare golden one is worth 5). Tap a chicken and the cat leaps
-/// there — they keep running, so aim ahead. Tap the floor and he runs there.
-/// A round lasts [roundSeconds].
+/// comes close, a rare golden one is worth 5). The cat waits crouched; a tap
+/// anywhere makes him pounce on the nearest chicken (he aims ahead by himself).
+/// A gold ring marks the chicken that is in reach right now — tap then. A chicken
+/// that is hopping when he lands gets away. A round lasts [roundSeconds].
 class ChickenGame extends FlameGame with TapCallbacks {
   ChickenGame({this.roundSeconds = 30});
 
@@ -51,7 +52,7 @@ class ChickenGame extends FlameGame with TapCallbacks {
     _s = {for (final n in names) n: Sprite(await _img.load('$n.webp'))};
     _bg = SpriteComponent(sprite: _s['bg_roof'], priority: -10);
     _cat = _Cat();
-    await addAll([_bg, _cat]);
+    await addAll([_bg, _cat, _Ring()]);
     _layout(size);
   }
 
@@ -114,31 +115,36 @@ class ChickenGame extends FlameGame with TapCallbacks {
   void _spawn() {
     final fromLeft = _rnd.nextBool();
     final golden = _rnd.nextDouble() < 0.1;
-    final speed = size.x * (0.22 + 0.2 * _rnd.nextDouble() + 0.18 * (_elapsed / roundSeconds)) * (golden ? 1.35 : 1);
+    final speed = size.x * (0.16 + 0.14 * _rnd.nextDouble() + 0.14 * (_elapsed / roundSeconds)) * (golden ? 1.35 : 1);
     final c = _Chicken(dir: fromLeft ? 1 : -1, speed: speed, golden: golden);
     _chickens.add(c);
     add(c);
   }
 
+  /// How far one pounce reaches.
+  double get leapRange => size.x * 0.5;
+
+  /// The chicken a pounce would go for now, and where it will be when he lands.
+  ({_Chicken chicken, double landX, bool inReach})? aim() {
+    ({_Chicken chicken, double landX, bool inReach})? best;
+    for (final c in _chickens.where((c) => !c.caught && c.onScreen)) {
+      final landX = c.position.x + c.velocity * _Cat.jumpTime; // he aims ahead by himself
+      final d = (landX - _cat.position.x).abs();
+      if (best == null || d < (best.landX - _cat.position.x).abs()) {
+        best = (chicken: c, landX: landX, inReach: d <= leapRange);
+      }
+    }
+    return best;
+  }
+
   @override
   void onTapDown(TapDownEvent event) {
     if (!running.value) return;
-    final p = event.canvasPosition;
-    // the chicken the player meant: nearest to the tap, generous radius
-    _Chicken? target;
-    var best = double.infinity;
-    for (final c in _chickens.where((c) => !c.caught)) {
-      final d = c.centre.distanceTo(p);
-      if (d < c.size.y * 1.1 && d < best) {
-        best = d;
-        target = c;
-      }
-    }
-    if (target != null) {
-      _cat.leapTo(target.position.x);
-    } else {
-      _cat.runTo(p.x);
-    }
+    final target = aim();
+    if (target == null) return;
+    final dx = target.landX - _cat.position.x;
+    // out of reach: he still jumps towards it, as far as he can
+    _cat.leapTo(_cat.position.x + dx.clamp(-leapRange, leapRange));
   }
 
   /// The cat landed at [x]: every chicken under his paws is caught.
@@ -174,11 +180,11 @@ class _Cat extends SpriteComponent with HasGameReference<ChickenGame> {
   double _targetX = 0;
   double _fromX = 0;
   double _dir = 1;
-  static const _jumpTime = 0.5;
+  static const jumpTime = 0.42;
 
   @override
   Future<void> onLoad() async {
-    sprite = game.sprite('cat_run1'); // sitting still until the first tap
+    sprite = game.sprite('cat_pounce'); // crouched, ready: he only moves when you tap
   }
 
   void fit(Vector2 view) {
@@ -191,9 +197,11 @@ class _Cat extends SpriteComponent with HasGameReference<ChickenGame> {
   void reset() {
     _state = _CatState.idle;
     position = Vector2(game.size.x * 0.5, game.floorY);
-    sprite = game.sprite('cat_run1');
+    sprite = game.sprite('cat_pounce');
     _face(1);
   }
+
+  bool get ready => _state == _CatState.idle;
 
   void _face(double dir) {
     if (dir == 0 || dir == _dir) return;
@@ -236,13 +244,13 @@ class _Cat extends SpriteComponent with HasGameReference<ChickenGame> {
         if (d.abs() <= step) {
           position.x = _targetX;
           _state = _CatState.idle;
-          sprite = game.sprite('cat_run1');
+          sprite = game.sprite('cat_pounce');
         } else {
           position.x += step * d.sign;
           sprite = game.sprite((_t * 10).floor().isEven ? 'cat_run1' : 'cat_run2');
         }
       case _CatState.jump:
-        final k = (_t / _jumpTime).clamp(0.0, 1.0);
+        final k = (_t / jumpTime).clamp(0.0, 1.0);
         position.x = _fromX + (_targetX - _fromX) * k;
         position.y = game.floorY - math.sin(k * math.pi) * size.y * 1.1;
         if (k >= 1) {
@@ -250,12 +258,12 @@ class _Cat extends SpriteComponent with HasGameReference<ChickenGame> {
           _state = _CatState.pounce;
           _t = 0;
           sprite = game.sprite('cat_pounce');
-          game.landedAt(position.x + _dir * size.x * 0.25, size.x * 0.45);
+          game.landedAt(position.x + _dir * size.x * 0.2, size.x * 0.6);
         }
       case _CatState.pounce:
         if (_t > 0.28) {
           _state = _CatState.idle;
-          sprite = game.sprite('cat_run1');
+          sprite = game.sprite('cat_pounce'); // back to the crouch, waiting
         }
       case _CatState.idle:
       case _CatState.win:
@@ -279,6 +287,11 @@ class _Chicken extends SpriteComponent with HasGameReference<ChickenGame> {
   final _rnd = math.Random();
 
   bool get inAir => _hop > 0.05;
+
+  /// Current horizontal speed (pixels per second, with the panic boost).
+  double get velocity => dir * speed * (_scared > 0 ? 1.5 : 1.0);
+
+  bool get onScreen => position.x > 0 && position.x < game.size.x;
   Vector2 get centre => position - Vector2(0, size.y * 0.5);
 
   void fit(Vector2 view) {
@@ -312,12 +325,12 @@ class _Chicken extends SpriteComponent with HasGameReference<ChickenGame> {
       return;
     }
     // panic when the cat is close: faster for a moment
-    if ((game.catX - position.x).abs() < game.size.x * 0.22 && _scared <= 0) _scared = 0.5;
+    if ((game.catX - position.x).abs() < game.size.x * 0.18 && _scared <= 0) _scared = 0.4;
     _scared -= dt;
-    final boost = _scared > 0 ? 1.7 : 1.0;
+    final boost = _scared > 0 ? 1.5 : 1.0;
     position.x += dir * speed * boost * dt;
     // now and then a flapping hop
-    if (_hop <= 0 && _rnd.nextDouble() < dt * 0.5) _hop = 0.001;
+    if (_hop <= 0 && _rnd.nextDouble() < dt * 0.35) _hop = 0.001;
     if (_hop > 0) {
       _hop += dt;
       final k = _hop / 0.45;
@@ -335,5 +348,30 @@ class _Chicken extends SpriteComponent with HasGameReference<ChickenGame> {
               : ((_t * 8).floor().isEven ? 'chicken_run1' : 'chicken_run2'));
     }
     if (position.x < -size.x * 1.5 || position.x > game.size.x + size.x * 1.5) removeFromParent();
+  }
+}
+
+/// A gold ring over the chicken a pounce would catch right now — the moment to tap.
+class _Ring extends Component with HasGameReference<ChickenGame> {
+  _Ring() : super(priority: 6);
+
+  double _t = 0;
+  final Paint _paint = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 3;
+
+  @override
+  void update(double dt) => _t += dt;
+
+  @override
+  void render(Canvas canvas) {
+    if (!game.running.value) return;
+    final a = game.aim();
+    if (a == null || !a.inReach || a.chicken.inAir) return;
+    final c = a.chicken;
+    final pulse = 0.5 + 0.5 * math.sin(_t * 9);
+    _paint.color = Color.fromRGBO(255, 208, 138, 0.55 + 0.45 * pulse);
+    final r = c.size.x * (0.55 + 0.08 * pulse);
+    canvas.drawCircle((c.position - Vector2(0, c.size.y * 0.5)).toOffset(), r, _paint);
   }
 }

@@ -1,0 +1,51 @@
+{
+  "bodyWidth": 380,
+  "sets": {
+    "walk": {
+      "frames": [
+        "walk_1.webp",
+        "walk_2.webp",
+        "walk_3.webp",
+        "walk_4.webp"
+      ],
+      "width": 510,
+      "height": 505
+    },
+    "idle": {
+      "frames": [
+        "idle_1.webp",
+        "idle_2.webp"
+      ],
+      "width": 463,
+      "height": 439
+    },
+    "happy": {
+      "frames": [
+        "happy_1.webp",
+        "happy_2.webp",
+        "happy_3.webp"
+      ],
+      "width": 654,
+      "height": 517
+    },
+    "come": {
+      "frames": [
+        "come_1.webp",
+        "come_2.webp",
+        "come_3.webp",
+        "come_4.webp"
+      ],
+      "width": 566,
+      "height": 580
+    },
+    "sleep": {
+      "frames": [
+        "sleep_1.webp",
+        "sleep_2.webp",
+        "sleep_3.webp"
+      ],
+      "width": 434,
+      "height": 357
+    }
+  }
+}

@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../app_state.dart';
 import '../features/audio/music.dart';
+import '../features/audio/sfx.dart';
+import '../features/pet/sr_fer.dart';
 import '../features/sleep/sleep.dart';
 import 'guide.dart';
 import 'minigame_overlay.dart';
@@ -59,6 +61,7 @@ class _GameHudState extends State<GameHud> {
 
   void _onAction(TamagotchiAction action) {
     Music.instance.start();
+    Sfx.instance.play(action == TamagotchiAction.jugar ? 'ui_open' : 'ui_tap');
     if (action == TamagotchiAction.jugar) {
       Music.instance.fadeTo(
         'baile',
@@ -273,6 +276,12 @@ class _StatsPanel extends StatelessWidget {
               stats: tamagotchi.maxito,
             ),
           ),
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            tooltip: 'Llamar a Sr. Fer',
+            onPressed: SrFer.callHim,
+            icon: const Icon(Icons.pets_rounded, color: _gold, size: 20),
+          ),
           ValueListenableBuilder<TamagotchiAction?>(
             valueListenable: wish,
             builder: (context, w, child) => _Glow(
@@ -285,6 +294,7 @@ class _StatsPanel extends StatelessWidget {
               tooltip: 'Dormir (8 horas)',
               onPressed: () {
                 Music.instance.start();
+                Sfx.instance.play('ui_tap');
                 Sleep.instance.start();
               },
               icon: const Icon(Icons.nightlight_round, color: _gold, size: 20),
@@ -295,8 +305,8 @@ class _StatsPanel extends StatelessWidget {
             builder: (context, _) => IconButton(
               visualDensity: VisualDensity.compact,
               tooltip: Music.instance.muted
-                  ? 'Activar música'
-                  : 'Silenciar música',
+                  ? 'Activar sonido'
+                  : 'Silenciar sonido',
               onPressed: Music.instance.toggleMute,
               icon: Icon(
                 Music.instance.muted

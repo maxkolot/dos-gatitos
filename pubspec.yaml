@@ -69,6 +69,8 @@ flutter:
     - assets/sleep/
     - assets/minigame/
     - assets/ui/
+    - assets/characters/fer/
+    - assets/sfx/
     - assets/characters/maxito/
     - assets/room/
 

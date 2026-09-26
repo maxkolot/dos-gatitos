@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../app_state.dart';
 import '../audio/music.dart';
+import '../audio/sfx.dart';
 import '../tamagotchi/tamagotchi.dart';
 
 enum SleepPhase { awake, cinematic, sleeping }
@@ -48,6 +49,7 @@ class Sleep extends ChangeNotifier {
         _phase = SleepPhase.sleeping;
         _startTick();
         unawaited(Music.instance.night());
+        unawaited(Sfx.instance.loop('night@0.8', fade: 2));
         notifyListeners();
       } else {
         await wake();
@@ -97,6 +99,8 @@ class Sleep extends ChangeNotifier {
       tamagotchi.activar(TamagotchiAction.dormir);
     }
     unawaited(Music.instance.morning());
+    unawaited(Sfx.instance.stopLoop('night', fade: 1.5));
+    unawaited(Sfx.instance.play('birds', delay: 0.6)); // good morning, Gràcia
     notifyListeners();
     onWake?.call();
   }

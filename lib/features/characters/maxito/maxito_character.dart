@@ -12,6 +12,7 @@ import '../../../app_state.dart';
 import '../../room/room_layout.dart';
 import '../name_tag.dart';
 import '../../anim/frame_anim.dart';
+import '../../audio/sfx.dart';
 import '../../stage/shadow.dart';
 import '../../stage/stage_director.dart';
 import '../sebastian/sebastian_character.dart';
@@ -244,6 +245,7 @@ class MaxitoCharacter extends PositionComponent
 
   @override
   void onTapUp(TapUpEvent event) {
+    Sfx.instance.play('heart_pop@0.5');
     // one talks at a time: Sebastián steps back when Maxito is chosen
     if (Sebastian.isFocused) Sebastian.exitDialogue();
     if (StageDirector.maxitoAnim.playing) StageDirector.maxitoAnim.stop();

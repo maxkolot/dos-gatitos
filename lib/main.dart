@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'app_state.dart';
 import 'features/audio/music.dart';
+import 'features/audio/sfx.dart';
 import 'features/sleep/sleep.dart';
 import 'game.dart';
 import 'ui/game_hud.dart';
@@ -18,6 +19,7 @@ import 'ui/splash_overlay.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  Sfx.instance.enabled = true; // (tests never run main: no audio plugin there)
   unawaited(tamagotchi.cargar()); // saved stats + what happened while away
   runApp(const DosGatitosApp());
   unawaited(appReady);
@@ -32,6 +34,7 @@ final Future<void> appReady = Future.wait<void>([
 ]).timeout(const Duration(seconds: 12), onTimeout: () => const []).then((_) async {
   await Sleep.instance.load(); // still night → countdown; morning → they wake up
   signalReady(); // web: the HTML video splash fades out
+  unawaited(Sfx.instance.warmUp());
   if (!Sleep.instance.active) unawaited(Guide.instance.showFirstTime());
   // the native apps may start the music right away; browsers need a first touch
   if (!kIsWeb) unawaited(Music.instance.start());

@@ -60,5 +60,40 @@
       204.7,
       3.4
     ]
-  ]
+  ],
+  "sfx": {
+    "0": [
+      "egg_dip"
+    ],
+    "1": [
+      "breadcrumbs",
+      "breadcrumbs@0.6+0.9"
+    ],
+    "2": [
+      "sizzle_in",
+      "loop:sizzle@0.85"
+    ],
+    "3": [
+      "spatula@0.8"
+    ],
+    "4": [
+      "whoosh@0.5"
+    ],
+    "5": [
+      "flip"
+    ],
+    "6": [
+      "stop:sizzle",
+      "plate"
+    ],
+    "7": [
+      "sprinkle"
+    ],
+    "8": [
+      "tada@0.8"
+    ],
+    "9": [
+      "kiss"
+    ]
+  }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../features/audio/sfx.dart';
 import '../features/minigame/chicken_game.dart';
 
 /// Is the mini-game open, and how did the last round go.
@@ -24,6 +25,7 @@ class MiniGame extends ChangeNotifier {
   }
 
   void close(int? best) {
+    Sfx.instance.play('ui_close');
     _open = false;
     notifyListeners();
     onClosed?.call(best);
@@ -72,6 +74,7 @@ class _MiniGameScreenState extends State<_MiniGameScreen> {
   }
 
   void _play() {
+    Sfx.instance.play('ui_tap');
     setState(() => _stage = _Stage.play);
     _game.startRound();
   }
@@ -85,6 +88,7 @@ class _MiniGameScreenState extends State<_MiniGameScreen> {
       _stage = _Stage.over;
     });
     if (record) {
+      Sfx.instance.play('fanfare', delay: 0.9);
       try {
         (await SharedPreferences.getInstance()).setInt(_bestKey, score);
       } catch (_) {}

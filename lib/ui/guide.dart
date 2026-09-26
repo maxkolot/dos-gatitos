@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../features/audio/sfx.dart';
+
 /// «¿Cómo se juega?»: shown once on the first launch, and again whenever the
 /// player taps the stats panel.
 class Guide extends ChangeNotifier {
@@ -24,6 +26,7 @@ class Guide extends ChangeNotifier {
   }
 
   void show() {
+    Sfx.instance.play('ui_open');
     _open = true;
     notifyListeners();
   }

@@ -7,6 +7,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
+import '../audio/sfx.dart';
 import '../stage/shadow.dart';
 
 /// «Atrapá las gallinas»: black-cat Sebastián on a Barcelona rooftop.
@@ -100,6 +101,7 @@ class ChickenGame extends FlameGame with TapCallbacks {
     timeLeft.value = math.max(0, roundSeconds - _elapsed);
     if (timeLeft.value <= 0) {
       running.value = false;
+      Sfx.instance.play('whistle');
       _cat.win();
       onRoundOver?.call(score.value);
       return;
@@ -121,6 +123,7 @@ class ChickenGame extends FlameGame with TapCallbacks {
     final c = _Chicken(dir: fromLeft ? 1 : -1, speed: speed, golden: golden);
     _chickens.add(c);
     add(c);
+    if (_rnd.nextDouble() < 0.35) Sfx.instance.play('cluck@0.35');
   }
 
   @override
@@ -148,14 +151,18 @@ class ChickenGame extends FlameGame with TapCallbacks {
   /// The cat landed at [x]: every chicken under his paws is caught.
   void landedAt(double x, double reach) {
     var caughtNow = 0;
+    var gold = false;
     for (final c in _chickens.where((c) => !c.caught)) {
       if ((c.position.x - x).abs() < reach + c.size.x * 0.3 && !c.inAir) {
         c.catchIt();
         score.value += c.golden ? 5 : 1;
+        gold |= c.golden;
         caughtNow++;
       }
     }
     if (caughtNow > 1) score.value += caughtNow; // two at once: a bonus
+    Sfx.instance.play(caughtNow > 0 ? 'squawk' : 'land');
+    if (gold || caughtNow > 1) Sfx.instance.play('coin', delay: 0.15);
   }
 
   /// Chickens panic when the cat is close.
@@ -220,6 +227,7 @@ class _Cat extends SpriteComponent with HasGameReference<ChickenGame> {
     if (_state == _CatState.jump || _state == _CatState.pounce) return;
     _targetX = x.clamp(size.x / 2, game.size.x - size.x / 2);
     _face((_targetX - position.x).sign);
+    if (_state != _CatState.run) Sfx.instance.play('scamper@0.7');
     _state = _CatState.run;
   }
 
@@ -231,6 +239,7 @@ class _Cat extends SpriteComponent with HasGameReference<ChickenGame> {
     _state = _CatState.jump;
     _t = 0;
     sprite = game.sprite('cat_jump');
+    Sfx.instance.play('leap');
   }
 
   void win() {

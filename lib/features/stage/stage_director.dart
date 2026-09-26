@@ -9,6 +9,7 @@ import '../../app_state.dart';
 import '../../game.dart';
 import '../anim/frame_anim.dart';
 import '../audio/music.dart';
+import '../audio/sfx.dart';
 import '../characters/maxito/maxito_state.dart';
 import '../characters/name_tag.dart';
 import '../characters/sebastian/sebastian_character.dart';
@@ -187,6 +188,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     };
     say(low.who, line);
     wish.value = action;
+    Sfx.instance.play('wish@0.7');
     _wishAge = 0;
   }
 
@@ -306,6 +308,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
   void _burst(int n, {double delay = 0}) {
     final a = _headOf(LineSpeaker.sebastian), b = _headOf(LineSpeaker.maxito);
     if (a == null || b == null) return;
+    Sfx.instance.play('sparkle@0.55', delay: delay);
     final x = (a.dx + b.dx) / 2;
     final y = math.min(a.dy, b.dy) + 60;
     for (var i = 0; i < n; i++) {
@@ -371,6 +374,12 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     speaking
       ..clear()
       ..addAll(_bubbles.where((b) => _clock >= b.start).map((b) => b.speaker == LineSpeaker.sebastian ? 'sebastian' : 'maxito'));
+    for (final b in _bubbles) {
+      if (!b.voiced && _clock >= b.start) {
+        b.voiced = true; // a few babbled syllables when a line appears
+        Sfx.instance.play(b.speaker == LineSpeaker.sebastian ? 'voice_seb@0.6' : 'voice_max@0.6', variants: 2);
+      }
+    }
     _checkWishes(dt);
     _hearts.removeWhere((h) => _clock > h.born + 1.8);
 
@@ -493,6 +502,7 @@ class _Bubble {
   final String text;
   final double start;
   final double end;
+  bool voiced = false;
   TextPainter? _tp;
   bool _laidOutWithFont = false;
 

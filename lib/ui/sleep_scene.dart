@@ -5,6 +5,7 @@ import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../features/audio/sfx.dart';
 import '../features/sleep/sleep.dart';
 
 /// The bedtime cinematic and the night countdown, over the whole game.
@@ -47,6 +48,18 @@ const double _nightPer = 3.2; // one night picture to the other
 const double _toBlack = 2.5;
 final double _total = _story.length * _perStory + _darkSeconds + _toBlack;
 
+/// What you hear during the story (seconds from the start): the table, the sofa
+/// bed, the jumps, the blanket, the lamp, then the night outside.
+const _sounds = [
+  (0.4, 'table_drag'),
+  (3.3, 'sofa_bed'),
+  (6.4, 'bed_jump'),
+  (9.3, 'blanket'),
+  (12.4, 'bed_jump@0.85'),
+  (14.7, 'lamp_click'),
+  (15.2, 'loop:night@0.8'),
+];
+
 class _Cinematic extends StatefulWidget {
   const _Cinematic();
 
@@ -62,7 +75,17 @@ class _CinematicState extends State<_Cinematic> with SingleTickerProviderStateMi
     ..addStatusListener((s) {
       if (s == AnimationStatus.completed) Sleep.instance.cinematicDone();
     })
+    ..addListener(_soundCues)
     ..forward();
+
+  int _nextSound = 0;
+
+  void _soundCues() {
+    final s = _t.value * _total;
+    while (_nextSound < _sounds.length && s >= _sounds[_nextSound].$1) {
+      Sfx.instance.cue(_sounds[_nextSound++].$2);
+    }
+  }
 
   @override
   void didChangeDependencies() {

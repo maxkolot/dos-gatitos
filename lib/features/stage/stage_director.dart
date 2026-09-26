@@ -103,7 +103,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
         _stopAll();
         duoAnim.play(_toast);
         _pair(_pick(_wineSeb), _pick(_wineMax), first: LineSpeaker.sebastian);
-        _burst(4, delay: 2.2);
+        _burst(4, delay: 4.5);
       case TamagotchiAction.hablar:
         _stopAll();
         final seconds = startChat();
@@ -112,7 +112,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
         _stopAll();
         duoAnim.play(_hug);
         _pair(_pick(_hugMax), _pick(_hugSeb), first: LineSpeaker.maxito);
-        _burst(9, delay: 2.4); // when the hug gets tight
+        _burst(9, delay: 5); // when the hug gets tight
       case TamagotchiAction.jugar:
         _pair(_pick(_playMax), _pick(_playSeb), first: LineSpeaker.maxito);
       case TamagotchiAction.cenar:
@@ -142,8 +142,8 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     sebastianAnim.play(_cook, onDone: () {
       duoAnim.play(_dinner);
       say(LineSpeaker.sebastian, _pick(const ['¡A comer!', 'Con limón, obvio.', 'Las mejores milanesas de Barcelona.']));
-      say(LineSpeaker.maxito, _pick(const ['Mmm… casate conmigo otra vez.', 'Dame un bocado del tuyo.', 'Esto es mejor que cualquier restaurante.']), delay: 3);
-      _burst(5, delay: 6);
+      say(LineSpeaker.maxito, _pick(const ['Mmm… casate conmigo otra vez.', 'Dame un bocado del tuyo.', 'Esto es mejor que cualquier restaurante.']), delay: 6);
+      _burst(5, delay: 13);
     });
   }
 
@@ -174,7 +174,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
       if (prevDur != null && line.interruptsPrevious) at -= prevDur * 0.4; // cuts in
       _bubbles.add(_Bubble(line.speaker, line.text, start: at, end: at + dur));
       last = math.max(last, at + dur);
-      at += dur + 0.35;
+      at += dur + 0.7;
       prevDur = dur;
     }
     return last - _clock;
@@ -188,10 +188,10 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
   void _pair(String a, String b, {required LineSpeaker first}) {
     final second = first == LineSpeaker.sebastian ? LineSpeaker.maxito : LineSpeaker.sebastian;
     say(first, a);
-    say(second, b, delay: _durationOf(a) + 0.3);
+    say(second, b, delay: _durationOf(a) + 0.6);
   }
 
-  double _durationOf(String text) => (1.8 + text.length * 0.05).clamp(2.2, 5.5);
+  double _durationOf(String text) => (2.6 + text.length * 0.075).clamp(3.2, 8.0);
 
   String _pick(List<String> options) => options[_rnd.nextInt(options.length)];
 
@@ -262,12 +262,10 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     _bubbles.removeWhere((b) => _clock > b.end);
     _hearts.removeWhere((h) => _clock > h.born + 1.8);
 
-    // they chat by themselves now and then, when nothing else is going on —
-    // every other time sitting on the floor cushions
+    // they chat by themselves now and then, standing where they are, when nothing else is going on
     if (_clock > _nextChat && !_busy && !_someoneFocused) {
-      final seconds = startChat();
-      if (_rnd.nextBool()) duoAnim.play(_cushions, seconds: seconds + 0.5);
-      _nextChat = _clock + 35 + _rnd.nextDouble() * 25;
+      startChat();
+      _nextChat = _clock + 45 + _rnd.nextDouble() * 30;
     }
 
     // Tamagotchi drift, once a second (the HUD redraws on each notify)

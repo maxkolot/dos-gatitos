@@ -6,9 +6,9 @@
     "cook_4.webp",
     "cook_5.webp"
   ],
-  "fps": 0.8,
+  "fps": 0.4,
   "loop": false,
-  "hold": 1.2,
+  "hold": 2.0,
   "width": 656,
   "height": 1019,
   "refHeight": 1000.0,

@@ -11,9 +11,9 @@
     "toast_9.webp",
     "toast_10.webp"
   ],
-  "fps": 3.0,
+  "fps": 1.2,
   "loop": false,
-  "hold": 1.5,
+  "hold": 3.0,
   "width": 789,
   "height": 1008,
   "refHeight": 1000.0,

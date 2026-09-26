@@ -1,0 +1,2892 @@
+{
+  "contractVersion": 1,
+  "eventCount": 65,
+  "dialogueCount": 10,
+  "offlineRecapCount": 18,
+  "categories": {
+    "piso": 8,
+    "musica": 6,
+    "vino": 4,
+    "cafe": 4,
+    "lluvia": 4,
+    "balcon": 5,
+    "gracia": 3,
+    "eixample": 3,
+    "raval": 3,
+    "barceloneta": 4,
+    "montjuic": 3,
+    "sitges": 3,
+    "metro": 3,
+    "supermercado": 4,
+    "rutina": 7,
+    "mimo": 1
+  },
+  "events": [
+    {
+      "id": "piso_desayuno_tarde",
+      "category": "piso",
+      "categoryLabel": "Piso",
+      "title": "Desayuno a las tres de la tarde",
+      "scene": "Nadie tiene hambre a la hora que corresponde. Sebastián prepara tostadas con tomate y Maxito las mira como si fueran un milagro recién bajado del cielo.",
+      "weight": 7,
+      "cooldown": 5,
+      "tags": [
+        "piso",
+        "comida",
+        "cocina"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "mediodia",
+          "tarde"
+        ]
+      },
+      "delta": {
+        "mood": 3.0,
+        "energy": 4.0,
+        "social": 2.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "En Argentina esto sería una merienda, pero acepto tu calendario."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Es desayuno si todavía no nos dormimos. Regla de la casa."
+        }
+      ]
+    },
+    {
+      "id": "piso_nevera_conspiracion",
+      "category": "piso",
+      "categoryLabel": "Piso",
+      "title": "Los dos mirando la nevera",
+      "scene": "Abren la nevera al mismo tiempo, la miran en silencio y ninguno dice nada. Es un ritual viejo que ya tiene su propio ritmo.",
+      "weight": 6,
+      "cooldown": 5,
+      "tags": [
+        "piso",
+        "comedia",
+        "cocina"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 2.0,
+        "energy": 3.0,
+        "social": 0.0,
+        "bond": 1.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Hay queso. Hay aceitunas. Hay... futuro."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Cerrá la puerta, que el frío se escapa.",
+          "interruptsPrevious": true
+        }
+      ]
+    },
+    {
+      "id": "piso_guerra_sofa",
+      "category": "piso",
+      "categoryLabel": "Piso",
+      "title": "Guerra silenciosa por el lado del sofá",
+      "scene": "El lado del sofá con la lámpara al lado es el mejor. Los dos lo saben. Ninguno lo va a decir en voz alta.",
+      "weight": 6,
+      "cooldown": 5,
+      "tags": [
+        "piso",
+        "comedia"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 3.0,
+        "energy": 0.0,
+        "social": 2.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Yo me senté primero, es un hecho objetivo."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Yo llegué primero a la vida, así que en realidad es mi sofá."
+        },
+        {
+          "speaker": "ambiente",
+          "text": "Terminan los dos en el mismo lado, uno encima del otro."
+        }
+      ]
+    },
+    {
+      "id": "piso_planta_montserrat",
+      "category": "piso",
+      "categoryLabel": "Piso",
+      "title": "La planta que ahora es de los dos",
+      "scene": "Compraron una suculenta para el balcón y Maxito la bautizó Montserrat, aunque no se parece a ninguna montaña.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "piso",
+        "comedia",
+        "plantas"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 2.0,
+        "energy": 1.0,
+        "social": 0.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Montserrat creció dos milímetros. Estoy orgulloso."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "La regaste con la misma agua del mate. No sé si eso cuenta como cariño."
+        }
+      ]
+    },
+    {
+      "id": "piso_cargador_viajero",
+      "category": "piso",
+      "categoryLabel": "Piso",
+      "title": "El cargador que viaja solo",
+      "scene": "El cargador del teléfono aparece en la cocina, después en el baño, después dentro de un zapato. Nadie lo movió, según los dos.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "piso",
+        "comedia"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 2.0,
+        "energy": 0.0,
+        "social": 1.0,
+        "bond": 1.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Privet, cargador. Otra vez en la cocina."
+        },
+        {
+          "speaker": "maxito",
+          "text": "No me mirés así, el enchufe de la cocina es el único que carga rápido."
+        }
+      ]
+    },
+    {
+      "id": "piso_siesta_sofa",
+      "category": "piso",
+      "categoryLabel": "Piso",
+      "title": "Siesta compartida sin acordarla",
+      "scene": "Uno se recuesta «un minuto» y el otro se sienta al lado a leer. Diez minutos después están los dos dormidos con el libro abierto.",
+      "weight": 6,
+      "cooldown": 5,
+      "tags": [
+        "piso",
+        "descanso"
+      ],
+      "conditions": {
+        "energyAtMost": 45.0
+      },
+      "delta": {
+        "mood": 3.0,
+        "energy": 5.0,
+        "social": -1.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "ambiente",
+          "text": "El libro queda abierto en la página 42, que ya nadie recuerda."
+        }
+      ]
+    },
+    {
+      "id": "piso_abrazo_sin_palabras",
+      "category": "mimo",
+      "categoryLabel": "Mimo",
+      "title": "Un abrazo sin explicaciones",
+      "scene": "Hoy el día viene gris y no hace falta preguntar nada. Sebastián abre los brazos y Maxito entra sin decir una palabra.",
+      "weight": 8,
+      "cooldown": 5,
+      "tags": [
+        "piso",
+        "consuelo",
+        "mimo"
+      ],
+      "conditions": {
+        "moodAtMost": "bajo"
+      },
+      "delta": {
+        "mood": 5.0,
+        "energy": 2.0,
+        "social": 4.0,
+        "bond": 4.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "No hace falta que expliques nada."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Ya sé. Solo quedate un rato más."
+        }
+      ]
+    },
+    {
+      "id": "piso_dia_gris",
+      "category": "piso",
+      "categoryLabel": "Piso",
+      "title": "Un día de esos",
+      "scene": "Sin motivo claro, el ánimo está bajo. La casa responde con mantas, sopa de sobre y una serie que ya vieron dos veces.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "piso",
+        "consuelo"
+      ],
+      "conditions": {
+        "moodAtMost": "bajo"
+      },
+      "delta": {
+        "mood": 3.0,
+        "energy": 3.0,
+        "social": 2.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Hoy no hacemos nada importante, ¿sí?"
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Hoy es nuestro plan: no hacer nada. Davai."
+        }
+      ]
+    },
+    {
+      "id": "piso_festejo_minimo",
+      "category": "piso",
+      "categoryLabel": "Piso",
+      "title": "Festejo por algo mínimo",
+      "scene": "Sebastián terminó una lista de cosas aburridas y Maxito insiste en celebrarlo con la botella que guardaban «para algo importante».",
+      "weight": 6,
+      "cooldown": 5,
+      "tags": [
+        "piso",
+        "festejo"
+      ],
+      "conditions": {
+        "moodAtLeast": "alto"
+      },
+      "delta": {
+        "mood": 4.0,
+        "energy": 2.0,
+        "social": 3.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Es un gran día porque yo digo que es un gran día."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Spasibo. Nadie celebra así un lunes."
+        }
+      ]
+    },
+    {
+      "id": "musica_vinilos_madrugada",
+      "category": "musica",
+      "categoryLabel": "Música",
+      "title": "Vinilos a las dos de la mañana",
+      "scene": "El volumen bajísimo, la aguja cayendo despacio, los dos en el suelo como si tuvieran veinte años.",
+      "weight": 6,
+      "cooldown": 5,
+      "tags": [
+        "musica",
+        "noche"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "noche",
+          "madrugada"
+        ]
+      },
+      "delta": {
+        "mood": 4.0,
+        "energy": -2.0,
+        "social": 3.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Este disco hay que escucharlo entero, sin saltar."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Escucho entero, pero el lado B lo pongo yo."
+        }
+      ]
+    },
+    {
+      "id": "musica_playlist_disputa",
+      "category": "musica",
+      "categoryLabel": "Música",
+      "title": "La playlist compartida",
+      "scene": "La playlist conjunta tiene dos facciones y una canción que aparece tres veces. Nadie asume la culpa.",
+      "weight": 7,
+      "cooldown": 5,
+      "tags": [
+        "musica",
+        "comedia"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 3.0,
+        "energy": 0.0,
+        "social": 2.0,
+        "bond": 1.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Hay bossa nova tres veces. Y una es a las 7 de la mañana."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Y hay un tango lento en el medio. ¿Quién lo puso?"
+        },
+        {
+          "speaker": "sebastian",
+          "text": "No me acuerdo. Siguiente pregunta.",
+          "interruptsPrevious": true
+        }
+      ]
+    },
+    {
+      "id": "musica_baile_cocina",
+      "category": "musica",
+      "categoryLabel": "Música",
+      "title": "Baile en la cocina",
+      "scene": "Suena una canción que no es romántica, pero igual bailan entre la mesada y la heladera, esquivando la sartén.",
+      "weight": 6,
+      "cooldown": 5,
+      "tags": [
+        "musica",
+        "amor"
+      ],
+      "conditions": {
+        "moodAtLeast": "normal"
+      },
+      "delta": {
+        "mood": 5.0,
+        "energy": -1.0,
+        "social": 3.0,
+        "bond": 4.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Un paso más y tiramos la sartén."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Tirá la sartén, total la compramos en el chino."
+        }
+      ]
+    },
+    {
+      "id": "musica_vecina_escoba",
+      "category": "musica",
+      "categoryLabel": "Música",
+      "title": "La escoba de la vecina",
+      "scene": "La vecina del cuarto golpea el techo con la escoba. Cinco minutos después manda un mensaje con un corazón y una carita durmiendo.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "musica",
+        "comedia",
+        "vecinos"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "noche",
+          "madrugada"
+        ]
+      },
+      "delta": {
+        "mood": 2.0,
+        "energy": 0.0,
+        "social": 2.0,
+        "bond": 0.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "¿Bajamos el volumen o subimos el corazón?"
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Bajá el volumen y mandale una tortilla mañana."
+        }
+      ]
+    },
+    {
+      "id": "musica_ukelele_dos_acordes",
+      "category": "musica",
+      "categoryLabel": "Música",
+      "title": "El ukelele de dos acordes",
+      "scene": "Maxito encontró el ukelele en el fondo del armario y tiene dos acordes y mucha confianza.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "musica",
+        "comedia"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 3.0,
+        "energy": 0.0,
+        "social": 1.0,
+        "bond": 1.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "No está desafinado, está con carácter."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Blyat, me encanta y me duele al mismo tiempo."
+        }
+      ]
+    },
+    {
+      "id": "musica_canción_que_era_nuestra",
+      "category": "musica",
+      "categoryLabel": "Música",
+      "title": "La canción que era de ustedes",
+      "scene": "Suena sin aviso la canción del primer verano y los dos se quedan quietos, cada uno en su recuerdo, sonriendo al mismo tiempo.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "musica",
+        "amor",
+        "memoria"
+      ],
+      "conditions": {
+        "bondAtLeast": 55.0
+      },
+      "delta": {
+        "mood": 4.0,
+        "energy": 0.0,
+        "social": 2.0,
+        "bond": 5.0
+      },
+      "lines": [
+        {
+          "speaker": "ambiente",
+          "text": "Ninguno la canta. Igual los dos la están cantando."
+        }
+      ]
+    },
+    {
+      "id": "vino_vermut_domingo",
+      "category": "vino",
+      "categoryLabel": "Vino",
+      "title": "Vermut de domingo",
+      "scene": "Un vermut largo, aceitunas en un plato chiquito y la conversación que se estira sin llegar a ningún lado.",
+      "weight": 6,
+      "cooldown": 5,
+      "tags": [
+        "vino",
+        "finde"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "mediodia",
+          "tarde"
+        ],
+        "weekendOnly": true
+      },
+      "delta": {
+        "mood": 4.0,
+        "energy": 1.0,
+        "social": 4.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "El vermut es una hora. Pasada esa hora, es otra cosa."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Vamos por la segunda hora entonces."
+        }
+      ]
+    },
+    {
+      "id": "vino_dos_copas_balcon",
+      "category": "vino",
+      "categoryLabel": "Vino",
+      "title": "Dos copas en el balcón",
+      "scene": "Vino barato, sillas plegables y la calle de abajo haciendo su ruido de siempre.",
+      "weight": 7,
+      "cooldown": 5,
+      "tags": [
+        "vino",
+        "balcon"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "noche",
+          "mediodia",
+          "tarde"
+        ]
+      },
+      "delta": {
+        "mood": 4.0,
+        "energy": 0.0,
+        "social": 3.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Brindo por... no sé, elegí vos."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Brindo porque estás acá y no tengo que elegir más nada."
+        }
+      ]
+    },
+    {
+      "id": "vino_cata_supermercado",
+      "category": "vino",
+      "categoryLabel": "Vino",
+      "title": "Cata muy seria de un vino de cuatro euros",
+      "scene": "Hoy se ponen solemnes: huelen la copa, la giran, dicen cosas sobre el bosque y el mineral.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "vino",
+        "comedia"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 4.0,
+        "energy": 0.0,
+        "social": 2.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Notas de frutos rojos y de presupuesto ajustado."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Yo siento ciruela. Y ganas de otra empanada."
+        }
+      ]
+    },
+    {
+      "id": "vino_copa_alfombra",
+      "category": "vino",
+      "categoryLabel": "Vino",
+      "title": "La copa que encontró la alfombra",
+      "scene": "Un codo, un gesto, y el vino rojo se va directo a la alfombra clara. Silencio de dos segundos.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "vino",
+        "comedia"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": -2.0,
+        "energy": 1.0,
+        "social": 1.0,
+        "bond": 1.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Sal, agua fría y no llores, mi amor."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "No lloro. Estoy calculando cuánto costaba esa alfombra."
+        }
+      ]
+    },
+    {
+      "id": "cafe_antes_de_hablar",
+      "category": "cafe",
+      "categoryLabel": "Café",
+      "title": "Café primero, palabras después",
+      "scene": "En esta casa nadie habla antes del primer café. Hoy Maxito intenta romper la regla y recibe una mirada.",
+      "weight": 7,
+      "cooldown": 5,
+      "tags": [
+        "cafe",
+        "manana",
+        "comedia"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "manana"
+        ]
+      },
+      "delta": {
+        "mood": 2.0,
+        "energy": 4.0,
+        "social": 1.0,
+        "bond": 0.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Tengo una idea enorme..."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Café. Idea. En ese orden.",
+          "interruptsPrevious": true
+        }
+      ]
+    },
+    {
+      "id": "cafe_cafetera_huelga",
+      "category": "cafe",
+      "categoryLabel": "Café",
+      "title": "La cafetera italiana en huelga",
+      "scene": "La cafetera de siempre tiene la junta gastada y hoy decidió tirar todo el agua por la cocina.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "cafe",
+        "comedia",
+        "crisis menor"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": -1.0,
+        "energy": 2.0,
+        "social": 2.0,
+        "bond": 0.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Nyet. No me hables. Estoy de luto por el café de la mañana."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Compramos junta nueva y un cortado de premio."
+        }
+      ]
+    },
+    {
+      "id": "cafe_bar_de_barrio",
+      "category": "cafe",
+      "categoryLabel": "Café",
+      "title": "Café con leche en el bar de barrio",
+      "scene": "Bajan a la esquina, piden dos cafés y un croissant para compartir. El camarero ya sabe cómo lo toman.",
+      "weight": 6,
+      "cooldown": 5,
+      "tags": [
+        "cafe",
+        "barrio",
+        "salida corta"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "manana",
+          "mediodia"
+        ]
+      },
+      "delta": {
+        "mood": 3.0,
+        "energy": 3.0,
+        "social": 4.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Él ya sabe que vos lo tomás sin azúcar."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Y sabe que vos pedís dos y te comés uno y medio."
+        }
+      ]
+    },
+    {
+      "id": "cafe_insomnio_libro",
+      "category": "cafe",
+      "categoryLabel": "Café",
+      "title": "Café a la madrugada y un libro",
+      "scene": "No hay sueño. Se hace café cargado, se lee en voz baja y el piso cruje cada vez que uno se mueve.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "cafe",
+        "madrugada",
+        "silencio"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "madrugada"
+        ],
+        "energyAtLeast": 40.0
+      },
+      "delta": {
+        "mood": 2.0,
+        "energy": -3.0,
+        "social": 2.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Leé para mí, que tu voz me ordena la cabeza."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Leo, pero si me quedo dormido vos seguís solo."
+        }
+      ]
+    },
+    {
+      "id": "lluvia_balcon_abierto",
+      "category": "lluvia",
+      "categoryLabel": "Lluvia",
+      "title": "Lluvia en Barcelona",
+      "scene": "Llueve fuerte y los dos dejan la puerta del balcón abierta para escucharla. El aire huele a piedra mojada.",
+      "weight": 7,
+      "cooldown": 5,
+      "tags": [
+        "lluvia",
+        "balcon",
+        "clima"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 3.0,
+        "energy": -1.0,
+        "social": 2.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Vení, escuchá. Suena como si la ciudad respirara."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "En Buenos Aires esta lluvia dura diez minutos. Acá se queda a vivir."
+        }
+      ]
+    },
+    {
+      "id": "lluvia_paraguas_para_dos",
+      "category": "lluvia",
+      "categoryLabel": "Lluvia",
+      "title": "Un paraguas para dos",
+      "scene": "Vuelven del mercado con un paraguas chico, un hombro mojado cada uno y el bolso apretado contra el pecho.",
+      "weight": 6,
+      "cooldown": 5,
+      "tags": [
+        "lluvia",
+        "salida corta",
+        "comedia"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "tarde",
+          "noche"
+        ]
+      },
+      "delta": {
+        "mood": 2.0,
+        "energy": -2.0,
+        "social": 3.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "El paraguas es mío, pero el hombro mojado es tuyo."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Caminá más rápido y dejá de hacer cuentas."
+        }
+      ]
+    },
+    {
+      "id": "lluvia_plan_cancelado",
+      "category": "lluvia",
+      "categoryLabel": "Lluvia",
+      "title": "Se cae el plan y no importa",
+      "scene": "Iban a salir, pero el cielo se puso de plomo. Se sacan los zapatos, se quedan en casa y no se arrepienten.",
+      "weight": 6,
+      "cooldown": 5,
+      "tags": [
+        "lluvia",
+        "piso"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 3.0,
+        "energy": 2.0,
+        "social": 2.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "¿Lo dejamos para el sábado?"
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Lo dejamos para siempre si querés. Traé la manta."
+        }
+      ]
+    },
+    {
+      "id": "lluvia_calcetines_mojados",
+      "category": "lluvia",
+      "categoryLabel": "Lluvia",
+      "title": "Los calcetines empapados",
+      "scene": "Un charco escondido, una zapatilla con agujero y un pie que hace un ruido raro al caminar por el pasillo.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "lluvia",
+        "comedia"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 3.0,
+        "energy": -1.0,
+        "social": 1.0,
+        "bond": 0.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Hace un ruido de dibujito animado."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "No me saques fotos. Ni se te ocurra.",
+          "interruptsPrevious": true
+        }
+      ]
+    },
+    {
+      "id": "balcon_atardecer_sillas",
+      "category": "balcon",
+      "categoryLabel": "Balcón",
+      "title": "Atardecer con sillas plegables",
+      "scene": "Dos sillas de metal, una cerveza fría y la luz naranja que entra por los edificios de enfrente.",
+      "weight": 7,
+      "cooldown": 5,
+      "tags": [
+        "balcon",
+        "atardecer"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "tarde",
+          "noche"
+        ]
+      },
+      "delta": {
+        "mood": 4.0,
+        "energy": 0.0,
+        "social": 3.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Esta luz la podríamos vender."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "La luz es gratis. Lo que se paga es el alquiler."
+        }
+      ]
+    },
+    {
+      "id": "balcon_plantas_charla",
+      "category": "balcon",
+      "categoryLabel": "Balcón",
+      "title": "Charla de plantas",
+      "scene": "Maxito habla con las plantas y jura que una albahaca está «contenta». Sebastián revisa si hay algo rescatable para la cena.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "balcon",
+        "plantas",
+        "comedia"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "manana",
+          "mediodia"
+        ]
+      },
+      "delta": {
+        "mood": 2.0,
+        "energy": 0.0,
+        "social": 2.0,
+        "bond": 1.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Esta albahaca me debe estar escuchando."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Si escucha, sabe que queremos usarla el jueves."
+        }
+      ]
+    },
+    {
+      "id": "balcon_vecina_riega",
+      "category": "balcon",
+      "categoryLabel": "Balcón",
+      "title": "La vecina de enfrente riega",
+      "scene": "La vecina de enfrente riega sus geranios a la misma hora de siempre y saluda con la mano, como cada tarde.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "balcon",
+        "vecinos",
+        "barrio"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "tarde"
+        ]
+      },
+      "delta": {
+        "mood": 2.0,
+        "energy": 0.0,
+        "social": 3.0,
+        "bond": 0.0
+      },
+      "lines": [
+        {
+          "speaker": "ambiente",
+          "text": "Un saludo de mano, la regadera levantada, nada más."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Es la persona más puntual de Barcelona."
+        }
+      ]
+    },
+    {
+      "id": "balcon_estrellas_madrugada",
+      "category": "balcon",
+      "categoryLabel": "Balcón",
+      "title": "Tres estrellas y una luna confundida",
+      "scene": "La ciudad tapa casi todo el cielo, pero quedan tres estrellas y una luna pálida que igual les alcanza.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "balcon",
+        "madrugada",
+        "silencio"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "madrugada"
+        ],
+        "bondAtLeast": 55.0
+      },
+      "delta": {
+        "mood": 3.0,
+        "energy": -1.0,
+        "social": 2.0,
+        "bond": 4.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "En Buenos Aires tampoco se veían. Uno igual las busca."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Encontré tres. Se las regalo todas a vos."
+        }
+      ]
+    },
+    {
+      "id": "balcon_silencio_comodo",
+      "category": "balcon",
+      "categoryLabel": "Balcón",
+      "title": "Silencio bien usado",
+      "scene": "Están los dos en el balcón sin hablar, y el silencio se siente cómodo, de esos que no hay que llenar.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "balcon",
+        "silencio"
+      ],
+      "conditions": {
+        "bondAtLeast": 80.0
+      },
+      "delta": {
+        "mood": 3.0,
+        "energy": 1.0,
+        "social": -1.0,
+        "bond": 5.0
+      },
+      "lines": [
+        {
+          "speaker": "ambiente",
+          "text": "Veinte minutos en silencio. Ninguno de los dos se mueve."
+        }
+      ]
+    },
+    {
+      "id": "gracia_plaza_sol",
+      "category": "gracia",
+      "categoryLabel": "Gràcia",
+      "title": "Vermut en una plaza de Gràcia",
+      "scene": "Terrazas llenas, gente con perro, alguien tocando la guitarra en el suelo. Encuentran dos taburetes por pura suerte.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "gracia",
+        "barrio"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "mediodia",
+          "tarde"
+        ],
+        "bondAtLeast": 40.0
+      },
+      "delta": {
+        "mood": 5.0,
+        "energy": -2.0,
+        "social": 5.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Conseguí dos asientos. Considerame tu héroe."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Heroína. Y sí, te debo un vermut."
+        }
+      ]
+    },
+    {
+      "id": "gracia_festa_major",
+      "category": "gracia",
+      "categoryLabel": "Gràcia",
+      "title": "Festa Major de Gràcia",
+      "scene": "Calles decoradas hasta el techo, charanga a lo lejos y un olor a pan recién hecho que los lleva de la mano.",
+      "weight": 2,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "gracia",
+        "raro",
+        "fiesta"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "noche"
+        ],
+        "weekendOnly": true,
+        "minDayIndex": 3
+      },
+      "delta": {
+        "mood": 6.0,
+        "energy": -4.0,
+        "social": 6.0,
+        "bond": 4.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Raro: hay que venir una vez al año y no perderse."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Perdámonos un rato más, total el barrio es chico."
+        }
+      ]
+    },
+    {
+      "id": "gracia_vinilos_y_libros",
+      "category": "gracia",
+      "categoryLabel": "Gràcia",
+      "title": "Vinilos y libros en Gràcia",
+      "scene": "Entran «solo a mirar» y salen con un disco viejo, dos libros de segunda mano y un póster que no les va a entrar en la pared.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "gracia",
+        "compras"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "tarde"
+        ]
+      },
+      "delta": {
+        "mood": 4.0,
+        "energy": -2.0,
+        "social": 3.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "El póster lo pegamos en la puerta."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Tenemos tres pósters, dos puertas. Hagamos la cuenta."
+        }
+      ]
+    },
+    {
+      "id": "eixample_paseo_calles",
+      "category": "eixample",
+      "categoryLabel": "Eixample",
+      "title": "Caminar el Eixample sin plan",
+      "scene": "Caminan en diagonal sin destino, miran los balcones modernistas y discuten cuál edificio es más lindo.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "eixample",
+        "paseo"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 4.0,
+        "energy": -2.0,
+        "social": 4.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Ese balcón con hierro parece hecho de encaje."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Ese otro tiene una bici colgada, y gana."
+        }
+      ]
+    },
+    {
+      "id": "eixample_pasteleria_luz",
+      "category": "eixample",
+      "categoryLabel": "Eixample",
+      "title": "Pastelería con luz antigua",
+      "scene": "Entran por el olor. Compran dos pasteles que no pensaban comprar y los comen en el mostrador, como dos delincuentes dulces.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "eixample",
+        "comida"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "manana",
+          "tarde"
+        ]
+      },
+      "delta": {
+        "mood": 5.0,
+        "energy": 1.0,
+        "social": 3.0,
+        "bond": 0.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "El de crema es mío, ya me lo llené de azúcar."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "El de chocolate es mío. Aprendí a defender lo mío."
+        }
+      ]
+    },
+    {
+      "id": "eixample_azotea_amigos",
+      "category": "eixample",
+      "categoryLabel": "Eixample",
+      "title": "Azotea de amigos en el Eixample",
+      "scene": "Los invita un amigo con terraza de verdad. Sillas distintas, luces de colores y vistas de techos con antenas.",
+      "weight": 3,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "eixample",
+        "amigos",
+        "noche"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "noche"
+        ],
+        "bondAtLeast": 45.0
+      },
+      "delta": {
+        "mood": 5.0,
+        "energy": -2.0,
+        "social": 6.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Desde acá arriba Barcelona parece ordenada."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Ves todo el Eixample y ni un ruido de obra. Milagro."
+        }
+      ]
+    },
+    {
+      "id": "raval_bar_pequeño",
+      "category": "raval",
+      "categoryLabel": "Raval",
+      "title": "Bar minúsculo en el Raval",
+      "scene": "Seis taburetes, azulejos antiguos y un dueño que sirve vermut sin preguntar. Los dos apretados y felices.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "raval",
+        "noche"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "noche"
+        ],
+        "socialAtLeast": 35.0
+      },
+      "delta": {
+        "mood": 4.0,
+        "energy": -2.0,
+        "social": 5.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Acá el ruido es parte del menú."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Y las aceitunas son gratis. Subamos el ánimo."
+        }
+      ]
+    },
+    {
+      "id": "raval_libreria_gato",
+      "category": "raval",
+      "categoryLabel": "Raval",
+      "title": "Librería vieja y un gato del local",
+      "scene": "Una librería de usados con un gato atigrado en la caja registradora. El gato no atiende a nadie.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "raval",
+        "libros",
+        "gatos"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "tarde",
+          "mediodia"
+        ]
+      },
+      "delta": {
+        "mood": 4.0,
+        "energy": -1.0,
+        "social": 3.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Es igual a vos, pero más responsable."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Es igual a vos: duerme arriba de la plata."
+        }
+      ]
+    },
+    {
+      "id": "raval_concierto_galeria",
+      "category": "raval",
+      "categoryLabel": "Raval",
+      "title": "Gig chiquito en una galería del Raval",
+      "scene": "Un concierto de treinta personas en un espacio que parece un living. Suena fuerte y suena bien.",
+      "weight": 3,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "raval",
+        "musica",
+        "raro"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "noche"
+        ],
+        "minDayIndex": 2
+      },
+      "delta": {
+        "mood": 5.0,
+        "energy": -3.0,
+        "social": 6.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Estamos a dos metros del baterista."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "A dos metros y sin entrada. Gracias, Barcelona."
+        }
+      ]
+    },
+    {
+      "id": "barceloneta_arena_fria",
+      "category": "barceloneta",
+      "categoryLabel": "Barceloneta",
+      "title": "Arena fría de mayo",
+      "scene": "El agua todavía está helada, pero igual se sacan las zapatillas y caminan por la orilla hasta mojarse los tobillos.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "barceloneta",
+        "mar"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "manana",
+          "mediodia"
+        ]
+      },
+      "delta": {
+        "mood": 5.0,
+        "energy": -1.0,
+        "social": 4.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Está fría. Está fría. Está frííísima."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Dejá de gritar, nos va a mirar toda la playa."
+        }
+      ]
+    },
+    {
+      "id": "barceloneta_chiringuito",
+      "category": "barceloneta",
+      "categoryLabel": "Barceloneta",
+      "title": "Comida de chiringuito",
+      "scene": "Un plato de calamares, dos cervezas y esa sensación rara de estar de vacaciones en la propia ciudad.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "barceloneta",
+        "comida"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "mediodia",
+          "tarde"
+        ]
+      },
+      "delta": {
+        "mood": 5.0,
+        "energy": 1.0,
+        "social": 4.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Hoy no cocinamos. Hoy es día de mantel de papel."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Y de arena en los pies. Es la prueba de que fue un buen día."
+        }
+      ]
+    },
+    {
+      "id": "barceloneta_rompeolas",
+      "category": "barceloneta",
+      "categoryLabel": "Barceloneta",
+      "title": "El rompeolas al atardecer",
+      "scene": "Se sientan sobre las piedras y miran los barcos. La luz se va cayendo sobre el puerto y nadie tiene apuro.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "barceloneta",
+        "atardecer"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "tarde",
+          "noche"
+        ]
+      },
+      "delta": {
+        "mood": 5.0,
+        "energy": -2.0,
+        "social": 4.0,
+        "bond": 4.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Podríamos quedarnos hasta que se apague todo."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Mañana trabajamos. Pero sí, un rato más."
+        }
+      ]
+    },
+    {
+      "id": "barceloneta_invierno_vacia",
+      "category": "barceloneta",
+      "categoryLabel": "Barceloneta",
+      "title": "La Barceloneta en enero",
+      "scene": "La playa está vacía, con abrigo, gaviotas gordas y un puesto de churros que igual abre. El mar es de ellos.",
+      "weight": 3,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "barceloneta",
+        "invierno",
+        "raro"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "manana",
+          "tarde"
+        ],
+        "weekdayOnly": true
+      },
+      "delta": {
+        "mood": 5.0,
+        "energy": -2.0,
+        "social": 3.0,
+        "bond": 4.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Está vacía. Es la mejor versión de esta playa."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Compartimos un cono de churros con guantes. Un caos hermoso."
+        }
+      ]
+    },
+    {
+      "id": "montjuic_jardines_subida",
+      "category": "montjuic",
+      "categoryLabel": "Montjuïc",
+      "title": "Subida a Montjuïc con pereza",
+      "scene": "Suben los jardines parando cada diez escalones. Se sientan en un banco a discutir si vale la pena la cima.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "montjuic",
+        "paseo"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "manana",
+          "mediodia"
+        ]
+      },
+      "delta": {
+        "mood": 4.0,
+        "energy": -4.0,
+        "social": 3.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Vale la pena, pero yo pago el funicular la próxima."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Vos no pagás nunca el funicular. Lo sé desde hace años."
+        }
+      ]
+    },
+    {
+      "id": "montjuic_castillo_puerto",
+      "category": "montjuic",
+      "categoryLabel": "Montjuïc",
+      "title": "El castillo mirando el puerto",
+      "scene": "Llegaron arriba. Desde la muralla se ve todo el puerto y los tejados de la Barceloneta apretaditos.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "montjuic",
+        "vistas"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "tarde",
+          "manana"
+        ],
+        "bondAtLeast": 45.0
+      },
+      "delta": {
+        "mood": 5.0,
+        "energy": -2.0,
+        "social": 3.0,
+        "bond": 4.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Mirá: vivimos allá abajo, en el medio del ruido."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Desde acá el ruido no existe. Me gusta igual"
+        }
+      ]
+    },
+    {
+      "id": "montjuic_fuentes_noche",
+      "category": "montjuic",
+      "categoryLabel": "Montjuïc",
+      "title": "Fuentes de Montjuïc encendidas",
+      "scene": "Un espectáculo de agua, luz y música con muchísima gente. Igual encuentran un huequito con vista libre.",
+      "weight": 3,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "montjuic",
+        "noche",
+        "raro"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "noche"
+        ],
+        "bondAtLeast": 50.0
+      },
+      "delta": {
+        "mood": 5.0,
+        "energy": -3.0,
+        "social": 6.0,
+        "bond": 4.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Quedate cerca, que acá te perdés en dos minutos."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "No me pierdo. Te estoy mirando a vos el espectáculo."
+        }
+      ]
+    },
+    {
+      "id": "sitges_tren_una_hora",
+      "category": "sitges",
+      "categoryLabel": "Sitges",
+      "title": "Tren de una hora a Sitges",
+      "scene": "Al final se decidieron: un tren de cercanías, ventana, auriculares que comparten y la costa apareciendo a la derecha.",
+      "weight": 3,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "sitges",
+        "viaje",
+        "raro"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "manana",
+          "mediodia"
+        ],
+        "bondAtLeast": 55.0,
+        "weekendOnly": true
+      },
+      "delta": {
+        "mood": 6.0,
+        "energy": -2.0,
+        "social": 4.0,
+        "bond": 4.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Escapada sin plan. No llevamos ni protector solar."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "En octubre no hace falta. Davai, confiá en mí."
+        }
+      ]
+    },
+    {
+      "id": "sitges_iglesia_helado",
+      "category": "sitges",
+      "categoryLabel": "Sitges",
+      "title": "Iglesia junto al mar y un helado",
+      "scene": "Sitges en calma: callejones blancos, la iglesia parada sobre las rocas y un helado de dos gustos que se derrite rápido.",
+      "weight": 3,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "sitges",
+        "comida"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "mediodia",
+          "tarde"
+        ],
+        "weekendOnly": true
+      },
+      "delta": {
+        "mood": 6.0,
+        "energy": -1.0,
+        "social": 4.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "El helado es de dos sabores y los dos son míos."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Eso no lo acordamos así. Dame un bocado o guerra."
+        }
+      ]
+    },
+    {
+      "id": "sitges_paseo_nocturno",
+      "category": "sitges",
+      "categoryLabel": "Sitges",
+      "title": "Sitges de noche, paseo junto al agua",
+      "scene": "Esperan el último tren paseando por el espigón. Hay una brisa fresca y un bar todavía abierto con luces bajas.",
+      "weight": 2,
+      "cooldown": 5,
+      "tags": [
+        "salida",
+        "sitges",
+        "noche",
+        "raro"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "noche"
+        ],
+        "bondAtLeast": 60.0,
+        "weekendOnly": true,
+        "minDayIndex": 4
+      },
+      "delta": {
+        "mood": 6.0,
+        "energy": -4.0,
+        "social": 5.0,
+        "bond": 5.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Si perdemos el tren, dormimos en la playa."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Si perdemos el tren, vos explicás el lunes en el café."
+        }
+      ]
+    },
+    {
+      "id": "metro_ultimo_tren",
+      "category": "metro",
+      "categoryLabel": "Metro",
+      "title": "El último metro después de la fiesta",
+      "scene": "El vagón casi vacío, las luces blancas, los dos con la música todavía en el cuerpo y los pies cansados.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "metro",
+        "fiesta",
+        "noche"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "madrugada",
+          "noche"
+        ],
+        "socialAtLeast": 45.0
+      },
+      "delta": {
+        "mood": 4.0,
+        "energy": -5.0,
+        "social": 4.0,
+        "bond": 3.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Todavía me zumba la cabeza."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Yo tengo zumbando los pies. Bajemos una parada antes."
+        }
+      ]
+    },
+    {
+      "id": "metro_tarjeta_del_fondo",
+      "category": "metro",
+      "categoryLabel": "Metro",
+      "title": "La tarjeta que siempre está en el fondo",
+      "scene": "En el molinete, la T-casual no aparece. Revolución de mochila, papeles viejos y al final la tarjeta estaba en un bolsillo interno.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "metro",
+        "comedia"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 3.0,
+        "energy": -1.0,
+        "social": 2.0,
+        "bond": 0.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Yo te espero del otro lado con paciencia infinita."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Paciencia infinita: encontró la tarjeta. Pasá vos primero."
+        }
+      ]
+    },
+    {
+      "id": "metro_andana_dos_mañana",
+      "category": "metro",
+      "categoryLabel": "Metro",
+      "title": "Andén a las dos de la mañana",
+      "scene": "Esperan el metro en un andén largo y vacío. El cartel dice que faltan ocho minutos y ellos creen cero.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "metro",
+        "madrugada"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "madrugada"
+        ]
+      },
+      "delta": {
+        "mood": 2.0,
+        "energy": -3.0,
+        "social": 3.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Ocho minutos. Mentira. Siempre mienten."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Sentate en el banco y contame algo del bar."
+        }
+      ]
+    },
+    {
+      "id": "super_noche_compra_absurda",
+      "category": "supermercado",
+      "categoryLabel": "Supermercado",
+      "title": "Supermercado a las once",
+      "scene": "Entran por leche y salen con leche, un vino, galletas de dinosaurio y una almohada con forma de perro.",
+      "weight": 6,
+      "cooldown": 5,
+      "tags": [
+        "supermercado",
+        "noche",
+        "comedia"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "noche",
+          "madrugada"
+        ]
+      },
+      "delta": {
+        "mood": 4.0,
+        "energy": -1.0,
+        "social": 3.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "La almohada de perro la necesita la casa. Es un bien común."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "La casa no pidió nada y ya tenemos tres almohadas."
+        }
+      ]
+    },
+    {
+      "id": "super_caja_lenta",
+      "category": "supermercado",
+      "categoryLabel": "Supermercado",
+      "title": "Cola lenta, decisiones rápidas",
+      "scene": "Un solo cajero, ocho personas y un señor que busca monedas exactas como si fuera un deporte.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "supermercado",
+        "comedia"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 3.0,
+        "energy": -1.0,
+        "social": 2.0,
+        "bond": 0.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Soy el tercero en la cola y ya escribí un testamento."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Yo compré una chocolatina y la terminé esperando."
+        }
+      ]
+    },
+    {
+      "id": "super_cena_de_restos",
+      "category": "supermercado",
+      "categoryLabel": "Supermercado",
+      "title": "Cena heroica con restos",
+      "scene": "Sin comprar nada nuevo: media berenjena, arroz de ayer, un huevo y una salsa inventada en el momento.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "supermercado",
+        "cocina",
+        "ahorro"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 3.0,
+        "energy": 2.0,
+        "social": 2.0,
+        "bond": 1.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Esto en un restaurante sería plato de autor."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Esto es un arroz con berenjena y sin culpa. Comé."
+        }
+      ]
+    },
+    {
+      "id": "super_carrito_cojo",
+      "category": "supermercado",
+      "categoryLabel": "Supermercado",
+      "title": "El carrito que tira a la izquierda",
+      "scene": "El carrito tiene la rueda loca y los dos van corrigiendo el rumbo por los pasillos como si fueran alineados.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "supermercado",
+        "comedia"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 3.0,
+        "energy": -1.0,
+        "social": 2.0,
+        "bond": 1.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Vamos en zigzag y la gente nos mira."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Que miren. Nosotros llegamos igual a la caja."
+        }
+      ]
+    },
+    {
+      "id": "rutina_regadera_inundacion",
+      "category": "rutina",
+      "categoryLabel": "Rutina",
+      "title": "La regadera que se cae sola",
+      "scene": "La regadera del baño se resbala y un chorro de agua cruza todo el pasillo. Freno heroico con una toalla.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "rutina",
+        "comedia",
+        "crisis menor"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 2.0,
+        "energy": -2.0,
+        "social": 2.0,
+        "bond": 0.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Toalla. Toalla. ¡Otra toalla!"
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Ya está, ya está. Solo se mojó todo el pasillo."
+        }
+      ]
+    },
+    {
+      "id": "rutina_alarma_muda",
+      "category": "rutina",
+      "categoryLabel": "Rutina",
+      "title": "La alarma que no sonó",
+      "scene": "Se durmieron cuarenta minutos más. El día arranca corrido y con una carrera por el café que igual termina bien.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "rutina",
+        "manana",
+        "comedia"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "manana"
+        ]
+      },
+      "delta": {
+        "mood": 1.0,
+        "energy": -2.0,
+        "social": 2.0,
+        "bond": 0.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Despertador silencioso. Sin palabras."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Yo lo escuché, me pareció que era de otro."
+        }
+      ]
+    },
+    {
+      "id": "rutina_calcetines_desaparecidos",
+      "category": "rutina",
+      "categoryLabel": "Rutina",
+      "title": "Los calcetines desaparecidos",
+      "scene": "La lavadora se quedó con tres calcetines sin pareja. La casa tiene una lista de sospechosos y ningún culpable.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "rutina",
+        "comedia"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 2.0,
+        "energy": 0.0,
+        "social": 1.0,
+        "bond": 0.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Hay un agujero negro y está entre el tambor y el rincon del balcón."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Comprá todos iguales y se termina el drama nacional."
+        }
+      ]
+    },
+    {
+      "id": "rutina_vecino_taladro",
+      "category": "rutina",
+      "categoryLabel": "Rutina",
+      "title": "El taladro del vecino",
+      "scene": "El vecino de arriba decide arreglar algo justo ahora. El ruido entra por el techo y los dos hablan más fuerte.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "rutina",
+        "vecinos",
+        "comedia"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": -1.0,
+        "energy": -1.0,
+        "social": 2.0,
+        "bond": 1.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Es un ritmo. Le podríamos poner música encima."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Ese es el nivel de resignación que admiraba en Barcelona."
+        }
+      ]
+    },
+    {
+      "id": "rutina_tortilla_debate",
+      "category": "rutina",
+      "categoryLabel": "Rutina",
+      "title": "Debate sobre la tortilla",
+      "scene": "Uno la quiere con cebolla y el otro sin. La discusión es seria, larga y absolutamente doméstica.",
+      "weight": 6,
+      "cooldown": 5,
+      "tags": [
+        "rutina",
+        "comedia",
+        "cocina"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 4.0,
+        "energy": 1.0,
+        "social": 3.0,
+        "bond": 2.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Con cebolla es la versión buena. Es evidente."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "La cebolla se lleva todo el sabor. Es un secuestro."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Hacemos dos, entonces. Media para cada uno.",
+          "interruptsPrevious": true
+        }
+      ]
+    },
+    {
+      "id": "rutina_cocina_harina",
+      "category": "rutina",
+      "categoryLabel": "Rutina",
+      "title": "La harina que se cayó entera",
+      "scene": "Un paquete de harina abierto, un movimiento raro y la cocina convertida en un paisaje nevado.",
+      "weight": 4,
+      "cooldown": 5,
+      "tags": [
+        "rutina",
+        "comedia",
+        "cocina"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 3.0,
+        "energy": -2.0,
+        "social": 2.0,
+        "bond": 0.0
+      },
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Podemos decir que fue un experimento."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Podemos limpiar. Empezá por ahí, científicamente."
+        }
+      ]
+    },
+    {
+      "id": "rutina_todo_desordenado",
+      "category": "rutina",
+      "categoryLabel": "Rutina",
+      "title": "Ordenar la casa los dos juntos",
+      "scene": "Se proponen ordenar en serio. Empiezan por la música, siguen por un cajón y terminan mirando fotos viejas en el suelo.",
+      "weight": 5,
+      "cooldown": 5,
+      "tags": [
+        "rutina",
+        "piso",
+        "memoria"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 4.0,
+        "energy": -1.0,
+        "social": 3.0,
+        "bond": 4.0
+      },
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Ese cajón era una trampa y vos lo sabías."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Vale, pero encontré la foto del primer día. Mirá esa cara."
+        }
+      ]
+    }
+  ],
+  "dialogues": [
+    {
+      "id": "dlg_que_cocinamos",
+      "spark": "Se hace tarde y la pregunta de siempre: ¿qué cocinamos?",
+      "weight": 8,
+      "categories": [
+        "piso",
+        "supermercado"
+      ],
+      "conditions": {},
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Podemos hacer pasta con lo que hay en la heladera."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Lo que hay es medio tomate y un limón."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Entonces pasta con limón. Es gourmet.",
+          "interruptsPrevious": true
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Es un limón con agua caliente, pero te sigo."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Y añadimos queso. Ahora sí es gourmet de verdad."
+        }
+      ]
+    },
+    {
+      "id": "dlg_planes_finde",
+      "spark": "Sábado a la mañana y dos planes distintos en la mesa.",
+      "weight": 7,
+      "categories": [
+        "gracia",
+        "barceloneta",
+        "sitges"
+      ],
+      "conditions": {},
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Yo digo Gràcia: vermut, plaza, pocas cuadras."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Y yo digo playa. Mar, arena, chiringuito."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Mar en octubre. Vas a temblar como un flan."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Temblamos juntos, entonces. Vamos a la playa.",
+          "interruptsPrevious": true
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Vamos a la playa, pero después vermut para compensar."
+        }
+      ]
+    },
+    {
+      "id": "dlg_vasos_balcon",
+      "spark": "Uno quiere llevar la botella al balcón, el otro no quiere más visitas de la vecina.",
+      "weight": 6,
+      "categories": [
+        "vino",
+        "balcon"
+      ],
+      "conditions": {},
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Llevamos el vino afuera y miramos la calle."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "La última vez la vecina golpeó la escoba a la una."
+        },
+        {
+          "speaker": "maxito",
+          "text": "A la una no, a las doce y media."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Eso es mucho peor y vos lo sabés.",
+          "interruptsPrevious": true
+        },
+        {
+          "speaker": "maxito",
+          "text": "Vasos de vidrio de la cocina. Si se cae, se cae juntos."
+        }
+      ]
+    },
+    {
+      "id": "dlg_cafe_manana",
+      "spark": "Siete y media de la mañana en la cocina, con muy pocas palabras disponibles.",
+      "weight": 7,
+      "categories": [
+        "cafe",
+        "piso"
+      ],
+      "conditions": {},
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Te cuento lo que soñé: había un tren y un gato con sombrero."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Mhm."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Y el gato te llevaba a vos, no a mí, y eso es importante...",
+          "interruptsPrevious": true
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Café. Después el gato, el tren y la denuncia."
+        }
+      ]
+    },
+    {
+      "id": "dlg_lluvia_paraguas",
+      "spark": "Llueve y hay un solo paraguas en el paragüero.",
+      "weight": 6,
+      "categories": [
+        "lluvia",
+        "balcon"
+      ],
+      "conditions": {},
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Vos sos más alto, llevá vos el paraguas."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Yo soy más alto, así que vos vas a ir echado encima."
+        },
+        {
+          "speaker": "maxito",
+          "text": "No es lo mismo, entonces el paraguas es mío.",
+          "interruptsPrevious": true
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Es lo mismo y los dos nos vamos a mojar igual. Caminá."
+        }
+      ]
+    },
+    {
+      "id": "dlg_playlist",
+      "spark": "La playlist compartida vuelve a ser un campo de batalla sin heridos.",
+      "weight": 6,
+      "categories": [
+        "musica",
+        "piso"
+      ],
+      "conditions": {},
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Hay que sacar la canción que repetiste todo marzo."
+        },
+        {
+          "speaker": "maxito",
+          "text": "No repetí nada. Esa canción es buena."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "La pusiste seis veces en una cena. Tengo pruebas."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Las pruebas las inventaste vos.",
+          "interruptsPrevious": true
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Dos canciones cada uno. Una que quieras y una de vergüenza."
+        }
+      ]
+    },
+    {
+      "id": "dlg_vino_cata",
+      "spark": "Sebastián quiere una cata seria y Maxito ya está mirando la etiqueta al revés.",
+      "weight": 5,
+      "categories": [
+        "vino"
+      ],
+      "conditions": {},
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Primero lo olemos. Sin apuro. Como la gente."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Huele a vino. Confirmado. Siguiente paso."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "No es un examen, es un placer.",
+          "interruptsPrevious": true
+        },
+        {
+          "speaker": "maxito",
+          "text": "Mi placer es tomarlo con fideos a las nueve. Brindis."
+        }
+      ]
+    },
+    {
+      "id": "dlg_metro_vuelta",
+      "spark": "Último metro, los dos cansados y las llaves perdidas en la mochila.",
+      "weight": 5,
+      "categories": [
+        "metro",
+        "raval"
+      ],
+      "conditions": {},
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Yo tengo las llaves en algún lado, juraría que sí."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Juraría es una palabra grande para las dos de la mañana."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Encontradas. Estaban en el bolsillo más chico.",
+          "interruptsPrevious": true
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Sentate y dormí un parada. Te despierto en casa."
+        }
+      ]
+    },
+    {
+      "id": "dlg_super_presupuesto",
+      "spark": "Carrito en mano, la cuenta mental de uno contra el entusiasmo del otro.",
+      "weight": 5,
+      "categories": [
+        "supermercado"
+      ],
+      "conditions": {},
+      "lines": [
+        {
+          "speaker": "sebastian",
+          "text": "Esta semana sin extras. Solo la lista."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Perfecto. Y estas galletas con dinosaurios son de la lista."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "No figuran en la lista ni en ninguna lista humana.",
+          "interruptsPrevious": true
+        },
+        {
+          "speaker": "maxito",
+          "text": "Figuran en la lista emocional. Y esa la escribimos los dos."
+        }
+      ]
+    },
+    {
+      "id": "dlg_sitges_tren",
+      "spark": "Ventanilla del tren de cercanías, mar a la derecha.",
+      "weight": 4,
+      "categories": [
+        "sitges",
+        "eixample"
+      ],
+      "conditions": {},
+      "lines": [
+        {
+          "speaker": "maxito",
+          "text": "Decime otra vez por qué no hacemos esto todos los fines de semana."
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Porque el sábado uno de los dos trabaja y siempre es vos."
+        },
+        {
+          "speaker": "maxito",
+          "text": "Hay tests el sábado, no es culpa mía.",
+          "interruptsPrevious": true
+        },
+        {
+          "speaker": "sebastian",
+          "text": "Nunca es tu culpa y siempre es el tren. Mirá el mar y no digas nada un rato."
+        }
+      ]
+    }
+  ],
+  "offlineRecaps": [
+    {
+      "id": "off_cafe_frio",
+      "prefix": "Mientras no estabas…",
+      "text": "Sebastián hizo café para los dos y se le enfrió el tuyo en la mesada.",
+      "display": "Mientras no estabas… Sebastián hizo café para los dos y se le enfrió el tuyo en la mesada.",
+      "weight": 8,
+      "tags": [
+        "piso",
+        "cafe"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": -1.0,
+        "energy": 0.0,
+        "social": 1.0,
+        "bond": 0.0
+      }
+    },
+    {
+      "id": "off_plancha_sin_planchar",
+      "prefix": "Mientras no estabas…",
+      "text": "Maxito quiso ordenar el armario y terminó probándose ropa vieja frente al espejo.",
+      "display": "Mientras no estabas… Maxito quiso ordenar el armario y terminó probándose ropa vieja frente al espejo.",
+      "weight": 7,
+      "tags": [
+        "piso",
+        "comedia"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 2.0,
+        "energy": -1.0,
+        "social": 0.0,
+        "bond": 0.0
+      }
+    },
+    {
+      "id": "off_montserrat_crecio",
+      "prefix": "Mientras no estabas…",
+      "text": "Montserrat, la suculenta del balcón, sobrevivió y hasta sacó una hoja nueva.",
+      "display": "Mientras no estabas… Montserrat, la suculenta del balcón, sobrevivió y hasta sacó una hoja nueva.",
+      "weight": 6,
+      "tags": [
+        "balcon",
+        "plantas"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 1.0,
+        "energy": 0.0,
+        "social": 0.0,
+        "bond": 1.0
+      }
+    },
+    {
+      "id": "off_siesta_larga",
+      "prefix": "Mientras no estabas…",
+      "text": "Se quedaron dormidos en el sofá con una serie a medias y nadie se acuerda del final.",
+      "display": "Mientras no estabas… Se quedaron dormidos en el sofá con una serie a medias y nadie se acuerda del final.",
+      "weight": 7,
+      "tags": [
+        "piso",
+        "descanso"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 1.0,
+        "energy": 3.0,
+        "social": 0.0,
+        "bond": 0.0
+      }
+    },
+    {
+      "id": "off_tortilla_dos_versiones",
+      "prefix": "Mientras no estabas…",
+      "text": "Discutieron otra vez por la tortilla con cebolla y terminaron haciendo dos.",
+      "display": "Mientras no estabas… Discutieron otra vez por la tortilla con cebolla y terminaron haciendo dos.",
+      "weight": 6,
+      "tags": [
+        "cocina",
+        "comedia"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 2.0,
+        "energy": 0.0,
+        "social": 0.0,
+        "bond": 1.0
+      }
+    },
+    {
+      "id": "off_lluvia_balcon",
+      "prefix": "Mientras no estabas…",
+      "text": "Dejaron la puerta del balcón abierta para escuchar la lluvia y se mojó media alfombra.",
+      "display": "Mientras no estabas… Dejaron la puerta del balcón abierta para escuchar la lluvia y se mojó media alfombra.",
+      "weight": 6,
+      "tags": [
+        "lluvia",
+        "balcon"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 1.0,
+        "energy": -1.0,
+        "social": 0.0,
+        "bond": 0.0
+      }
+    },
+    {
+      "id": "off_barrio_paseo_corto",
+      "prefix": "Mientras no estabas…",
+      "text": "Bajaron a la esquina a comprar pan y volvieron con pan, flores y dos helados.",
+      "display": "Mientras no estabas… Bajaron a la esquina a comprar pan y volvieron con pan, flores y dos helados.",
+      "weight": 7,
+      "tags": [
+        "barrio",
+        "salida corta"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 2.0,
+        "energy": 0.0,
+        "social": 1.0,
+        "bond": 0.0
+      }
+    },
+    {
+      "id": "off_vinilo_repetido",
+      "prefix": "Mientras no estabas…",
+      "text": "El disco quedó dando vueltas con la aguja al final y nadie se levantó a sacarlo.",
+      "display": "Mientras no estabas… El disco quedó dando vueltas con la aguja al final y nadie se levantó a sacarlo.",
+      "weight": 6,
+      "tags": [
+        "musica"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 1.0,
+        "energy": -1.0,
+        "social": 0.0,
+        "bond": 0.0
+      }
+    },
+    {
+      "id": "off_metro_ultimo",
+      "prefix": "Mientras no estabas…",
+      "text": "Volvieron en el último metro, sentados uno contra el otro, casi dormidos.",
+      "display": "Mientras no estabas… Volvieron en el último metro, sentados uno contra el otro, casi dormidos.",
+      "weight": 5,
+      "tags": [
+        "metro",
+        "fiesta"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "madrugada",
+          "noche"
+        ]
+      },
+      "delta": {
+        "mood": 2.0,
+        "energy": -2.0,
+        "social": 0.0,
+        "bond": 2.0
+      }
+    },
+    {
+      "id": "off_super_almohada_perro",
+      "prefix": "Mientras no estabas…",
+      "text": "En el supermercado de la noche compraron una almohada con forma de perro «para la casa».",
+      "display": "Mientras no estabas… En el supermercado de la noche compraron una almohada con forma de perro «para la casa».",
+      "weight": 5,
+      "tags": [
+        "supermercado",
+        "comedia"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "noche",
+          "madrugada"
+        ]
+      },
+      "delta": {
+        "mood": 2.0,
+        "energy": 0.0,
+        "social": 1.0,
+        "bond": 0.0
+      }
+    },
+    {
+      "id": "off_manana_lenta",
+      "prefix": "Mientras no estabas…",
+      "text": "El café de la mañana se estiró hasta el mediodía, con las manos calentitas alrededor de la taza.",
+      "display": "Mientras no estabas… El café de la mañana se estiró hasta el mediodía, con las manos calentitas alrededor de la taza.",
+      "weight": 7,
+      "tags": [
+        "cafe",
+        "manana"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "manana"
+        ]
+      },
+      "delta": {
+        "mood": 2.0,
+        "energy": 2.0,
+        "social": 0.0,
+        "bond": 0.0
+      }
+    },
+    {
+      "id": "off_tarde_sillas",
+      "prefix": "Mientras no estabas…",
+      "text": "Sacaron las sillas al balcón y se quedaron viendo la luz naranja sobre los edificios.",
+      "display": "Mientras no estabas… Sacaron las sillas al balcón y se quedaron viendo la luz naranja sobre los edificios.",
+      "weight": 6,
+      "tags": [
+        "balcon",
+        "atardecer"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "tarde",
+          "noche"
+        ]
+      },
+      "delta": {
+        "mood": 3.0,
+        "energy": 0.0,
+        "social": 0.0,
+        "bond": 2.0
+      }
+    },
+    {
+      "id": "off_vecina_saludo",
+      "prefix": "Mientras no estabas…",
+      "text": "La vecina de enfrente les preguntó por vos y mandó saludos.",
+      "display": "Mientras no estabas… La vecina de enfrente les preguntó por vos y mandó saludos.",
+      "weight": 5,
+      "tags": [
+        "vecinos",
+        "barrio"
+      ],
+      "conditions": {},
+      "delta": {
+        "mood": 1.0,
+        "energy": 0.0,
+        "social": 2.0,
+        "bond": 0.0
+      }
+    },
+    {
+      "id": "off_abrazo_largo",
+      "prefix": "Mientras no estabas…",
+      "text": "Se quedaron un rato abrazados sin decir nada, de esos silencios que arreglan el día.",
+      "display": "Mientras no estabas… Se quedaron un rato abrazados sin decir nada, de esos silencios que arreglan el día.",
+      "weight": 6,
+      "tags": [
+        "mimo"
+      ],
+      "conditions": {
+        "moodAtMost": "bajo"
+      },
+      "delta": {
+        "mood": 3.0,
+        "energy": 0.0,
+        "social": 0.0,
+        "bond": 3.0
+      }
+    },
+    {
+      "id": "off_playlist_nueva",
+      "prefix": "Mientras no estabas…",
+      "text": "Maxito armó una playlist nueva y tu canción quedó primera, sin avisarte.",
+      "display": "Mientras no estabas… Maxito armó una playlist nueva y tu canción quedó primera, sin avisarte.",
+      "weight": 6,
+      "tags": [
+        "musica",
+        "amor"
+      ],
+      "conditions": {
+        "bondAtLeast": 50.0
+      },
+      "delta": {
+        "mood": 3.0,
+        "energy": 0.0,
+        "social": 0.0,
+        "bond": 3.0
+      }
+    },
+    {
+      "id": "off_carta_a_mano",
+      "prefix": "Mientras no estabas…",
+      "text": "Sebastián te dejó una nota en la mesa que dice «volvé pronto, gato».",
+      "display": "Mientras no estabas… Sebastián te dejó una nota en la mesa que dice «volvé pronto, gato».",
+      "weight": 6,
+      "tags": [
+        "amor",
+        "piso"
+      ],
+      "conditions": {
+        "bondAtLeast": 55.0
+      },
+      "delta": {
+        "mood": 3.0,
+        "energy": 0.0,
+        "social": 0.0,
+        "bond": 3.0
+      }
+    },
+    {
+      "id": "off_noche_larga_casa",
+      "prefix": "Mientras no estabas…",
+      "text": "Hablaron hasta muy tarde, con el vino a medias, sobre cosas que no se dicen de día.",
+      "display": "Mientras no estabas… Hablaron hasta muy tarde, con el vino a medias, sobre cosas que no se dicen de día.",
+      "weight": 5,
+      "tags": [
+        "noche",
+        "piso"
+      ],
+      "conditions": {
+        "timeOfDay": [
+          "noche",
+          "madrugada"
+        ],
+        "bondAtLeast": 60.0
+      },
+      "delta": {
+        "mood": 2.0,
+        "energy": -2.0,
+        "social": 0.0,
+        "bond": 4.0
+      }
+    },
+    {
+      "id": "off_extraño_tu_lado",
+      "prefix": "Mientras no estabas…",
+      "text": "El lado de la cama donde dormís quedó demasiado grande y lo dijeron en voz alta.",
+      "display": "Mientras no estabas… El lado de la cama donde dormís quedó demasiado grande y lo dijeron en voz alta.",
+      "weight": 5,
+      "tags": [
+        "amor",
+        "casa"
+      ],
+      "conditions": {
+        "bondAtLeast": 65.0
+      },
+      "delta": {
+        "mood": 1.0,
+        "energy": 0.0,
+        "social": -1.0,
+        "bond": 3.0
+      }
+    }
+  ]
+}

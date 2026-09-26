@@ -1,6 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
+import 'app_state.dart';
 import 'features/features.dart';
 
 /// Main Dos Gatitos Tamagotchi scene. Legacy fish/cat demo removed.
@@ -11,5 +12,6 @@ class DosGatitosGame extends FlameGame {
   @override
   Future<void> onLoad() async {
     await addAll(buildFeatures());
+    if (!gameLoaded.isCompleted) gameLoaded.complete();
   }
 }

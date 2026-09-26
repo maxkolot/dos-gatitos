@@ -42,7 +42,7 @@
   <script>
     (function () {
       var LOOP_FROM = 5.0;   // seconds: start of the back-and-forth tail
-      var MIN_SHOW = 1200;   // ms: never just flash
+      var MIN_SHOW = 4000;   // ms: room, characters, font and music are all there by then
       var splash = document.getElementById('splash');
       var video = document.getElementById('splash-video');
       var shown = Date.now();
@@ -62,8 +62,8 @@
           setTimeout(function () { video.pause(); splash.remove(); }, 500);
         }, Math.max(0, MIN_SHOW - (Date.now() - shown)));
       }
-      window.addEventListener('flutter-first-frame', hide);
-      setTimeout(hide, 30000); // never trap the player behind the splash
+      window.addEventListener('dg-ready', hide); // sent by the game when everything is loaded
+      setTimeout(hide, 20000); // never trap the player behind the splash
     })();
   </script>
   <button id="update" onclick="location.reload()">🐾 Nueva versión — actualizar</button>

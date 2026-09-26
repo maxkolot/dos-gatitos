@@ -173,8 +173,9 @@ class SebastianCharacter extends PositionComponent
     final anim = StageDirector.sebastianAnim;
     final frame = anim.frame;
     if (frame != null && !animator.isFocused) {
-      paintAnimFrame(canvas, frame, anim.data!, size.x, size.y, _animPaint);
-      _paintTag(canvas);
+      final data = anim.data!;
+      paintAnimFrame(canvas, frame, data, size.x, size.y, _animPaint);
+      _paintTag(canvas, data.headInBox(anim.frameIndex, size.x, size.y));
       return;
     }
     final pose = animator.pose;
@@ -195,15 +196,17 @@ class SebastianCharacter extends PositionComponent
     if (blink != null && pose.eyeOpen < 0.999) {
       _paint(canvas, blink, 1 - pose.eyeOpen);
     }
-    canvas.restore();
     _paintTag(canvas);
+    canvas.restore();
   }
 
-  void _paintTag(Canvas canvas) {
+  /// The name sits on top of his head: called inside the body transform (it
+  /// sways and breathes with him) or with the head point of an animation frame.
+  void _paintTag(Canvas canvas, [Offset? head]) {
     // hidden while he is in the close-up
     final zoom = animator.pose.zoom;
     final opacity = (1 - (zoom - 1) * 4).clamp(0.0, 1.0);
-    _tag.paint(canvas, Offset(size.x / 2, -4), opacity: opacity);
+    _tag.paint(canvas, (head ?? Offset(size.x / 2, 0)) - const Offset(0, 4), opacity: opacity);
   }
 
   void _paint(Canvas canvas, Sprite sprite, double opacity) {

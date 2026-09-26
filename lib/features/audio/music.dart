@@ -21,12 +21,25 @@ class Music extends ChangeNotifier {
 
   AudioPlayer get _p => _player ??= AudioPlayer()..setReleaseMode(ReleaseMode.loop);
 
-  /// First user gesture: the music begins.
-  Future<void> start() async {
-    if (_started) return;
-    _started = true;
-    await _playCurrent();
+  /// Loads the default loop, so the first note plays without a gap.
+  Future<void> preload() async {
+    try {
+      await _p.setSource(AssetSource('audio/$_track.mp3'));
+    } catch (e) {
+      debugPrint('Music: $e');
+    }
   }
+
+  /// The music begins (native: at launch; web: on the first touch — a blocked
+  /// autoplay is simply retried on the next one).
+  Future<void> start() async {
+    if (_started || _starting) return;
+    _starting = true;
+    _started = await _playCurrent();
+    _starting = false;
+  }
+
+  bool _starting = false;
 
   /// Switches the loop ('casa' / 'baile').
   Future<void> play(String track) async {
@@ -51,14 +64,16 @@ class Music extends ChangeNotifier {
     }
   }
 
-  Future<void> _playCurrent() async {
-    if (_muted) return;
+  Future<bool> _playCurrent() async {
+    if (_muted) return true;
     try {
       await _p.stop();
       await _p.play(AssetSource('audio/$_track.mp3'), volume: _track == 'baile' ? 0.6 : 0.5);
+      return true;
     } catch (e) {
       // no sound is never a reason to break the game (autoplay rules, silent mode…)
       debugPrint('Music: $e');
+      return false;
     }
   }
 }

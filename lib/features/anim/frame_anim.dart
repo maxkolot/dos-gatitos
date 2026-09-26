@@ -16,6 +16,7 @@ class FrameAnimData {
     required this.refHeight,
     required this.feetY,
     required this.centerX,
+    this.heads = const [],
   });
 
   final List<ui.Image> frames;
@@ -29,6 +30,17 @@ class FrameAnimData {
   final double refHeight;
   final double feetY;
   final double centerX;
+
+  /// Top of the head per frame (frame pixels) — the name tag rides on it.
+  final List<ui.Offset> heads;
+
+  /// Head top of frame [i] inside the idle sprite box (see [paintAnimFrame]).
+  ui.Offset? headInBox(int i, double boxWidth, double boxHeight) {
+    if (heads.isEmpty) return null;
+    final h = heads[i.clamp(0, heads.length - 1)];
+    final k = boxHeight / refHeight;
+    return ui.Offset(boxWidth / 2 + (h.dx - centerX) * k, boxHeight - (feetY - h.dy) * k);
+  }
 
   double get oneShotSeconds => frames.length / fps + hold;
 
@@ -52,6 +64,10 @@ class FrameAnimData {
         refHeight: (meta['refHeight'] as num).toDouble(),
         feetY: (meta['feetY'] as num).toDouble(),
         centerX: (meta['centerX'] as num).toDouble(),
+        heads: [
+          for (final p in (meta['heads'] as List? ?? const []))
+            ui.Offset(((p as List)[0] as num).toDouble(), (p[1] as num).toDouble()),
+        ],
       );
     } catch (e) {
       debugPrint('FrameAnimData: cannot load $dir/$name ($e)');
@@ -98,11 +114,17 @@ class FramePlayer {
     if (_t >= _limit) stop();
   }
 
+  int get frameIndex {
+    final d = _data;
+    if (d == null || d.frames.isEmpty) return 0;
+    final i = (_t * d.fps).floor();
+    return d.loop ? i % d.frames.length : math.min(i, d.frames.length - 1);
+  }
+
   ui.Image? get frame {
     final d = _data;
     if (d == null || d.frames.isEmpty) return null;
-    final i = (_t * d.fps).floor();
-    return d.frames[d.loop ? i % d.frames.length : math.min(i, d.frames.length - 1)];
+    return d.frames[frameIndex];
   }
 }
 

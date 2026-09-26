@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/services.dart' show rootBundle;
@@ -104,7 +105,11 @@ class MaxitoCharacter extends PositionComponent
     anchor = Anchor.bottomCenter;
     priority = 5; // over the room, under the HUD
     size = Vector2.all(200);
-    _image = await _decode(assetPath);
+    try {
+      _image = await _decode(assetPath);
+    } catch (e) {
+      debugPrint('Maxito: cannot load $assetPath ($e)'); // the rest of the scene still loads
+    }
     StageDirector.maxito = this;
     if (debugStateFromUrl) _applyDebugState();
   }
@@ -256,8 +261,10 @@ class MaxitoCharacter extends PositionComponent
     if (frame != null && !controller.state.isCloseUp) {
       canvas.save();
       canvas.translate(_animShift, 0);
-      paintAnimFrame(canvas, frame, anim.data!, w, h, _paint);
-      _tag.paint(canvas, ui.Offset(w / 2, -4));
+      final data = anim.data!;
+      paintAnimFrame(canvas, frame, data, w, h, _paint);
+      final head = data.headInBox(anim.frameIndex, w, h) ?? ui.Offset(w / 2, 0);
+      _tag.paint(canvas, head - const ui.Offset(0, 4));
       canvas.restore();
       return;
     }
@@ -279,13 +286,13 @@ class MaxitoCharacter extends PositionComponent
       _paint,
     );
     _drawLids(canvas, img, w, h, sx, sy);
+    // his name rides on his head: same transform as the body
+    _tag.paint(canvas, ui.Offset(w / 2, -4), opacity: (1 - _zoom * 4).clamp(0.0, 1.0));
     canvas.restore();
 
     if (controller.state == MaxitoState.playful) {
       _drawSparkles(canvas, w, h);
     }
-    // his name, hidden while he is in the close-up
-    _tag.paint(canvas, ui.Offset(w / 2, -4), opacity: (1 - _zoom * 4).clamp(0.0, 1.0));
   }
 
   /// Closes the eyes with the skin band right above each eye, squashed over it.

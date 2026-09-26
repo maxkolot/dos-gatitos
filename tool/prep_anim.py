@@ -53,6 +53,21 @@ def person_component(im):
     return top, feet, center
 
 
+def head_top(im, person_center, person_height):
+    """Top of the character's head in this frame: the highest opaque pixel near his body centre
+    (props like a cabinet stand to the side and are lower than his head)."""
+    a = im.getchannel('A')
+    w, h = im.size
+    half = person_height * 0.22  # search the head in a column around the body centre
+    x0, x1 = max(0, int(person_center - half)), min(w, int(person_center + half))
+    px = a.load()
+    for y in range(h):
+        xs = [x for x in range(x0, x1, 2) if px[x, y] > 128]
+        if len(xs) >= 3:
+            return sum(xs) / len(xs), y
+    return person_center, 0
+
+
 def natural_key(s):
     return [int(t) if t.isdigit() else t for t in re.split(r'(\d+)', os.path.basename(s))]
 
@@ -82,6 +97,10 @@ def main():
 
     os.makedirs(a.out, exist_ok=True)
     names = []
+    heads = []
+    for f in frames:  # the name tag follows the head frame by frame
+        hx, hy = head_top(f, center, feet - top)
+        heads.append([round((hx - x0) * k, 1), round((hy - y0) * k, 1)])
     for i, f in enumerate(frames, 1):
         c = f.crop((x0, y0, x1, y1))
         c = c.resize((round(c.width * k), round(c.height * k)), Image.LANCZOS)
@@ -98,6 +117,7 @@ def main():
         'refHeight': round((feet - top) * k, 1),
         'feetY': round((feet - y0) * k, 1),
         'centerX': round((center - x0) * k, 1),
+        'heads': heads,
     }
     with open(os.path.join(a.out, f'{a.name}.json'), 'w', encoding='utf-8') as fh:
         json.dump(meta, fh, indent=2)

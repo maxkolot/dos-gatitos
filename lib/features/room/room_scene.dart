@@ -1,3 +1,4 @@
+import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/widgets.dart';
@@ -32,8 +33,22 @@ class RoomScene extends Component with HasGameReference<FlameGame> {
   /// Called once per size change (rotation, browser resize, folding phone).
   void Function(RoomLayout layout)? onLayoutChanged;
 
+  // FlameGame.images defaults to the `assets/images/` prefix. Room art lives
+  // deliberately in `assets/room/`, so keep a tiny dedicated cache whose
+  // prefix is empty rather than mutating the game's shared image cache.
+  final Images _roomImages = Images(prefix: '');
+
   Sprite? _background;
-  final Paint _paint = Paint()..filterQuality = FilterQuality.none; // crisp pixels, no blur
+
+  /// Set when the background art could not be loaded (missing/corrupt asset).
+  Object? _loadError;
+
+  /// True while the background art is not available.
+  bool get hasBackground => _background != null;
+
+  Object? get loadError => _loadError;
+  final Paint _paint = Paint()
+    ..filterQuality = FilterQuality.none; // crisp pixels, no blur
   final Paint _zoneFill = Paint()..color = const Color(0x33FF8A3D);
   final Paint _zoneStroke = Paint()
     ..color = const Color(0xCCFFD08A)
@@ -42,12 +57,25 @@ class RoomScene extends Component with HasGameReference<FlameGame> {
 
   @override
   Future<void> onLoad() async {
-    final image = await game.images.load(backgroundAsset);
-    _background = Sprite(
-      image,
-      srcSize: Vector2(image.width.toDouble(), image.height.toDouble()),
-    );
+    try {
+      final image = await _roomImages.load(backgroundAsset);
+      _background = Sprite(
+        image,
+        srcSize: Vector2(image.width.toDouble(), image.height.toDouble()),
+      );
+    } catch (error) {
+      // Never take the gameplay down because of art: the zones/floor line stay
+      // usable and the game keeps running on the flat background colour.
+      _loadError = error;
+      debugPrint('RoomScene: cannot load $backgroundAsset ($error)');
+    }
     _syncLayout();
+  }
+
+  @override
+  void onRemove() {
+    _roomImages.clearCache();
+    super.onRemove();
   }
 
   /// Recomputes the layout if the canvas size changed. Called every frame —
@@ -71,7 +99,8 @@ class RoomScene extends Component with HasGameReference<FlameGame> {
   Rect zoneRect(String id) => layout.zoneRectById(id);
 
   /// Where a character of [height] stands when it is "at" that zone.
-  Offset standPoint(String id, {double height = 96}) => layout.standPoint(id, height: height);
+  Offset standPoint(String id, {double height = 96}) =>
+      layout.standPoint(id, height: height);
 
   /// Zone under a canvas point — for tap/drag handling.
   RoomZone? zoneAt(Offset point) => layout.zoneAt(point);
@@ -98,7 +127,8 @@ class RoomScene extends Component with HasGameReference<FlameGame> {
       canvas.drawRect(rect, _zoneStroke);
       final painter = TextPainter(
         text: TextSpan(
-          text: '${zone.id}  (${rect.left.round()},${rect.top.round()}) ${rect.width.round()}x${rect.height.round()}',
+          text:
+              '${zone.id}  (${rect.left.round()},${rect.top.round()}) ${rect.width.round()}x${rect.height.round()}',
           style: const TextStyle(color: Color(0xFFFFE7C4), fontSize: 11),
         ),
         textDirection: TextDirection.ltr,
@@ -127,7 +157,12 @@ class RoomScene extends Component with HasGameReference<FlameGame> {
 /// ([RoomLayout]), so characters placed with [RoomLayout.standPoint] land
 /// exactly on the sofa/table/window/music hotspots.
 class RoomBackdrop extends StatelessWidget {
-  const RoomBackdrop({super.key, this.child, this.builder, this.showZoneDebug = false});
+  const RoomBackdrop({
+    super.key,
+    this.child,
+    this.builder,
+    this.showZoneDebug = false,
+  });
 
   /// Drawn on top of the room (e.g. characters, HUD).
   final Widget? child;
@@ -149,8 +184,10 @@ class RoomBackdrop extends StatelessWidget {
           filterQuality: FilterQuality.none,
           isAntiAlias: false,
         ),
-        if (showZoneDebug) Positioned.fill(child: CustomPaint(painter: _ZoneDebugPainter())),
-        if (builder case final build?) Positioned.fill(child: _LayoutBuilderBox(builder: build)),
+        if (showZoneDebug)
+          Positioned.fill(child: CustomPaint(painter: _ZoneDebugPainter())),
+        if (builder case final build?)
+          Positioned.fill(child: _LayoutBuilderBox(builder: build)),
         ?child,
       ],
     );
@@ -165,7 +202,8 @@ class _LayoutBuilderBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context, constraints) => builder(RoomLayout(canvas: constraints.biggest)),
+      builder: (context, constraints) =>
+          builder(RoomLayout(canvas: constraints.biggest)),
     );
   }
 }
@@ -195,4 +233,3 @@ class _ZoneDebugPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-

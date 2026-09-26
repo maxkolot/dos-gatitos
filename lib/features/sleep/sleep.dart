@@ -47,7 +47,7 @@ class Sleep extends ChangeNotifier {
       if (remaining > Duration.zero) {
         _phase = SleepPhase.sleeping;
         _startTick();
-        unawaited(Music.instance.pauseForNight());
+        unawaited(Music.instance.night());
         notifyListeners();
       } else {
         await wake();
@@ -63,7 +63,7 @@ class Sleep extends ChangeNotifier {
     _until = DateTime.now().add(night);
     _phase = SleepPhase.cinematic;
     notifyListeners();
-    unawaited(Music.instance.pauseForNight());
+    unawaited(Music.instance.night());
     try {
       (await SharedPreferences.getInstance()).setInt(_key, _until!.millisecondsSinceEpoch);
     } catch (e) {
@@ -95,7 +95,7 @@ class Sleep extends ChangeNotifier {
     if (slept >= const Duration(minutes: 30) || slept == night) {
       tamagotchi.activar(TamagotchiAction.dormir);
     }
-    unawaited(Music.instance.resumeAfterNight());
+    unawaited(Music.instance.morning());
     notifyListeners();
     onWake?.call();
   }

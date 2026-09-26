@@ -15,7 +15,8 @@ class Music extends ChangeNotifier {
   String _track = 'casa';
   bool _started = false;
   bool _muted = false;
-  bool _night = false;
+  double _volume = 0;
+  int _fadeId = 0;
 
   bool get muted => _muted;
   String get track => _track;
@@ -50,22 +51,11 @@ class Music extends ChangeNotifier {
     if (_started) await _playCurrent();
   }
 
-  /// They sleep: silence until the morning.
-  Future<void> pauseForNight() async {
-    _night = true;
-    try {
-      await _player?.pause();
-    } catch (e) {
-      debugPrint('Music: $e');
-    }
-  }
+  /// Bedtime: the lullaby comes in from whatever was playing.
+  Future<void> night() => fadeTo('noche');
 
-  Future<void> resumeAfterNight() async {
-    _night = false;
-    _track = 'casa';
-    notifyListeners();
-    if (_started) await _playCurrent();
-  }
+  /// Morning: back to the flat's music.
+  Future<void> morning() => fadeTo('casa');
 
   Future<void> toggleMute() async {
     _muted = !_muted;
@@ -82,11 +72,48 @@ class Music extends ChangeNotifier {
     }
   }
 
+  static double _levelOf(String track) => switch (track) {
+        'baile' => 0.6,
+        'noche' => 0.55,
+        _ => 0.5,
+      };
+
+  /// Changes the loop smoothly: the current one fades out, the new one fades in.
+  Future<void> fadeTo(String track, {Duration out = const Duration(milliseconds: 1800), Duration fadeIn = const Duration(milliseconds: 2600)}) async {
+    if (_track == track) return;
+    _track = track;
+    notifyListeners();
+    if (!_started || _muted) return;
+    final id = ++_fadeId;
+    try {
+      await _ramp(0, out, id);
+      if (id != _fadeId) return; // another fade took over
+      await _p.stop();
+      await _p.play(AssetSource('audio/$track.mp3'), volume: 0);
+      _volume = 0;
+      await _ramp(_levelOf(track), fadeIn, id);
+    } catch (e) {
+      debugPrint('Music: $e');
+    }
+  }
+
+  Future<void> _ramp(double to, Duration d, int id) async {
+    const steps = 24;
+    final from = _volume;
+    for (var i = 1; i <= steps; i++) {
+      if (id != _fadeId) return;
+      _volume = from + (to - from) * i / steps;
+      await _p.setVolume(_volume);
+      await Future<void>.delayed(d ~/ steps);
+    }
+  }
+
   Future<bool> _playCurrent() async {
-    if (_muted || _night) return true;
+    if (_muted) return true;
     try {
       await _p.stop();
-      await _p.play(AssetSource('audio/$_track.mp3'), volume: _track == 'baile' ? 0.6 : 0.5);
+      _volume = _levelOf(_track);
+      await _p.play(AssetSource('audio/$_track.mp3'), volume: _volume);
       return true;
     } catch (e) {
       // no sound is never a reason to break the game (autoplay rules, silent mode…)

@@ -196,6 +196,37 @@ def baile():
     return lowpass(tr.loop(), 7000)
 
 
+def noche():
+    """Night lullaby, 60 bpm, 16 bars: soft pads, a music box, a low hum — no drums."""
+    tr = Track(16, 60, tail=6.0)
+    chords = ['C3 G3 B3 E4 D5', 'A2 E3 G3 C4 B4', 'F2 C3 E3 A3 G4', 'F2 Ab3 C4 D4 F4']  # Cmaj9, Am9, Fmaj9, Fm6
+    arps = [['E5', 'G5', 'B5', 'D6'], ['C5', 'E5', 'G5', 'B5'], ['A4', 'C5', 'E5', 'G5'], ['Ab4', 'C5', 'D5', 'F5']]
+    for bar in range(16):
+        c = bar // 2 % 4
+        # pad: slow attack, long tail, two slightly detuned voices
+        for n in note_names(chords[c]):
+            for det in (0.0, 0.18):
+                tr.put(tone(midi(n) * 2 ** (det / 12), 9.0, 'sine', a=1.4, d=6.0, s=0.5, r=2.5), bar * 4, 0.05)
+        # music box: sparse, high, bell-like (fast decay, a soft octave partial)
+        if bar % 2 == 0 or bar >= 8:
+            for k, name in enumerate(arps[c]):
+                beat = bar * 4 + k * (1.0 if bar % 2 == 0 else 0.75) + (0.5 if bar % 2 else 0)
+                f = midi(note_names(name)[0])
+                bell = tone(f, 2.5, 'sine', d=0.7, r=0.3)
+                bell[: int(1.5 * SR)] += 0.25 * tone(f * 2, 1.5, 'sine', d=0.35, r=0.2)
+                tr.put(bell, beat, 0.08)
+        # low hum under the chord
+        root = note_names(chords[c])[0]
+        tr.put(tone(midi(root - 12), 4.2, 'sine', a=0.6, d=3.0, s=0.4, r=1.0), bar * 4, 0.12)
+    mix = tr.loop()
+    mix += lowpass(noise(len(mix) / SR), 900) * 0.01  # night air
+    mix = lowpass(mix, 3600)
+    k = int(0.015 * SR)  # 15 ms dip at the loop point: no click where the pads wrap around
+    mix[:k] *= np.linspace(0, 1, k)
+    mix[-k:] *= np.linspace(1, 0, k)
+    return mix
+
+
 def write(path, x):
     x = x / (np.max(np.abs(x)) + 1e-9) * 0.85
     wav = path[:-4] + '.wav'
@@ -214,3 +245,4 @@ if __name__ == '__main__':
     os.makedirs(out, exist_ok=True)
     write(os.path.join(out, 'casa.mp3'), casa())
     write(os.path.join(out, 'baile.mp3'), baile())
+    write(os.path.join(out, 'noche.mp3'), noche())

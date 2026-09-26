@@ -138,9 +138,9 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     _stopAll();
     Music.instance.start();
     maxitoAnim.play(_record, onDone: () {
-      Music.instance.play('baile');
+      Music.instance.fadeTo('baile', out: const Duration(milliseconds: 600), fadeIn: const Duration(milliseconds: 900));
       say(LineSpeaker.maxito, _pick(const ['¡Temazo!', 'Esta es para vos, Sebas.', '¡A bailar!']));
-      sebastianAnim.play(_dance, seconds: 34, onDone: () => Music.instance.play('casa'));
+      sebastianAnim.play(_dance, seconds: 34, onDone: () => Music.instance.fadeTo('casa'));
     });
   }
 
@@ -171,7 +171,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     sebastianAnim.cancel();
     maxitoAnim.cancel();
     duoAnim.cancel();
-    if (Music.instance.track == 'baile') Music.instance.play('casa'); // the dance was cut short
+    if (Music.instance.track == 'baile') Music.instance.fadeTo('casa'); // the dance was cut short
   }
 
   // ---------------------------------------------------------------------------

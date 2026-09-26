@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -107,26 +108,35 @@ class _CinematicState extends State<_Cinematic> with SingleTickerProviderStateMi
         builder: (context, _) {
           final s = _t.value * _total;
           final storyEnd = _story.length * _perStory;
-          // camera: a slow zoom through the story, then a drift towards the window
+          final screen = MediaQuery.sizeOf(context);
+          // camera: the letterbox opens up (the black bars shrink) while the picture zooms in;
+          // in the dark room it reaches the whole screen and drifts to the window
+          final double open;
           final double zoom;
           final Alignment focus;
           if (s < storyEnd) {
-            zoom = 1.0 + 0.14 * (s / storyEnd);
+            final k = Curves.easeIn.transform(s / storyEnd);
+            open = 0.55 * k;
+            zoom = 1.0 + 0.12 * k;
             focus = const Alignment(0, 0.1);
           } else {
             final k = Curves.easeInOut.transform(((s - storyEnd) / _darkSeconds).clamp(0.0, 1.0));
-            zoom = 1.14 + 0.9 * k;
+            open = 0.55 + 0.45 * k;
+            zoom = 1.12 + 0.55 * k;
             focus = Alignment.lerp(const Alignment(0, 0.1), const Alignment(0.06, -0.62), k)!;
           }
+          final frameH = lerpDouble(screen.width * 853 / 1280, screen.height, open)!;
           final black = ((s - storyEnd - _darkSeconds) / _toBlack).clamp(0.0, 1.0);
           final (cur, next, f) = _frameAt(s);
-          Widget pic(String name) => Image.asset('$_dir/$name.webp', fit: BoxFit.cover, gaplessPlayback: true);
+          Widget pic(String name) =>
+              Image.asset('$_dir/$name.webp', fit: BoxFit.cover, alignment: focus, gaplessPlayback: true);
           return Stack(
             fit: StackFit.expand,
             children: [
               Center(
-                child: AspectRatio(
-                  aspectRatio: 1280 / 853, // letterbox: the whole picture across the screen
+                child: SizedBox(
+                  width: screen.width,
+                  height: frameH,
                   child: ClipRect(
                     child: Transform.scale(
                       scale: zoom,

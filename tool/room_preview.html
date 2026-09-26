@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!-- Dev-only preview of lib/features/room/room_scene.dart: renders the room art at the two
+     acceptance sizes with the exact BoxFit.cover maths + interactive zones of the game.
+     Open with: python3 -m http.server 8321 (repo root) -> http://localhost:8321/tool/room_preview.html -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>RoomScene preview — 390x844 / 430x932</title>
+<style>
+  body { margin:0; background:#15131f; color:#ffd9a8; font:13px/1.4 system-ui, sans-serif; padding:16px; }
+  h1 { font-size:15px; margin:0 0 8px; }
+  label { user-select:none; }
+  .row { display:flex; gap:24px; align-items:flex-start; }
+  .phone { position:relative; overflow:hidden; border-radius:14px; box-shadow:0 0 0 2px #3b3350, 0 8px 30px #000a; }
+  .phone canvas, .phone img.bg { position:absolute; image-rendering:pixelated; }
+  .zone { position:absolute; box-sizing:border-box; background:#ff8a3d33; border:1px solid #ffd08acc; }
+  .zone b { position:absolute; left:3px; top:3px; color:#ffe7c4; font:11px/1 monospace; text-shadow:0 1px 2px #000; }
+  .hud { position:absolute; left:0; top:0; width:100%; background:#ffffff22; border-bottom:1px dashed #ffffff66; }
+  .hud b { position:absolute; left:6px; bottom:2px; color:#fff; font:11px/1 monospace; opacity:.75; }
+  .cap { font:12px/1.4 monospace; opacity:.8; }
+</style>
+</head>
+<body>
+<h1>RoomScene — assets/room/bg_room.png (art 708x1536), cover + zonas interactivas</h1>
+<label><input type="checkbox" id="dbg" checked> mostrar zonas / HUD safe area / línea de suelo</label>
+<div class="row" id="row"></div>
+<script>
+const ART_W = 708, ART_H = 1536;
+const FLOOR_LINE = 0.795, HUD_H = 108;
+const ZONES = [
+  ['sofa',    0.300, 0.530, 0.440, 0.270],
+  ['table',   0.360, 0.720, 0.290, 0.150],
+  ['window',  0.055, 0.140, 0.305, 0.380],
+  ['music',   0.655, 0.470, 0.290, 0.300],
+  ['plants',  0.020, 0.550, 0.170, 0.330],
+];
+const SIZES = [[390, 844], [430, 932]];
+
+function frame(w, h) {
+  const wrap = document.createElement('div');
+  wrap.className = 'phone';
+  wrap.style.width = w + 'px'; wrap.style.height = h + 'px';
+  const img = document.createElement('img');
+  img.className = 'bg'; img.src = '../assets/room/bg_room.png';
+  wrap.appendChild(img);
+  const scale = Math.max(w / ART_W, h / ART_H);
+  const dw = ART_W * scale, dh = ART_H * scale, ox = (w - dw) / 2, oy = (h - dh) / 2;
+  img.style.width = dw + 'px'; img.style.height = dh + 'px';
+  img.style.left = ox + 'px'; img.style.top = oy + 'px';
+  const toX = (nx) => ox + nx * dw, toY = (ny) => oy + ny * dh;
+
+  const hud = document.createElement('div');
+  hud.className = 'hud'; hud.style.height = Math.min(HUD_H, h * .2) + 'px';
+  hud.innerHTML = `<b>HUD safe area = ${Math.min(HUD_H, Math.round(h * .2))}px</b>`;
+  hud.dataset.dbg = 1; wrap.appendChild(hud);
+
+  const floor = document.createElement('div');
+  floor.style.cssText = `position:absolute;left:0;width:100%;top:${toY(FLOOR_LINE)}px;border-top:2px solid #ff8a3d88`;
+  floor.dataset.dbg = 1; wrap.appendChild(floor);
+
+  for (const [id, l, t, zw, zh] of ZONES) {
+    const d = document.createElement('div');
+    d.className = 'zone'; d.dataset.dbg = 1;
+    d.style.left = toX(l) + 'px'; d.style.top = toY(t) + 'px';
+    d.style.width = zw * dw + 'px'; d.style.height = zh * dh + 'px';
+    d.innerHTML = `<b>${id} ${Math.round(toX(l))},${Math.round(toY(t))} ${Math.round(zw * dw)}x${Math.round(zh * dh)}</b>`;
+    wrap.appendChild(d);
+  }
+  const cap = document.createElement('div');
+  cap.className = 'cap';
+  cap.textContent = `${w}x${h} · cover scale ${scale.toFixed(3)} · crop ${Math.round(dw - w)}x${Math.round(dh - h)} px`;
+  const col = document.createElement('div');
+  col.appendChild(wrap); col.appendChild(cap);
+  return col;
+}
+for (const [w, h] of SIZES) document.getElementById('row').appendChild(frame(w, h));
+const dbg = document.getElementById('dbg');
+dbg.onchange = () => document.querySelectorAll('[data-dbg]').forEach((e) => (e.style.display = dbg.checked ? '' : 'none'));
+</script>
+</body>
+</html>

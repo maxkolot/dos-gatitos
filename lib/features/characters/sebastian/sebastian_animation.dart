@@ -126,7 +126,7 @@ class SebastianAnimator {
   final Duration blinkDuration;
 
   /// Scale at the end of the close-up.
-  static const double focusZoom = 2.05;
+  static const double focusZoom = 1.7;
 
   final math.Random _rnd;
 

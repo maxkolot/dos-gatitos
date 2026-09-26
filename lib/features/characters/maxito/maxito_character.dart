@@ -8,6 +8,7 @@ import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/services.dart' show rootBundle;
 
 import '../../../game.dart';
+import '../../../app_state.dart';
 import '../../room/room_layout.dart';
 import '../name_tag.dart';
 import '../../anim/frame_anim.dart';
@@ -62,7 +63,7 @@ class MaxitoCharacter extends PositionComponent
   static const double zoomOutSeconds = 0.55;
 
   /// How much bigger he is when he is right in front of the camera.
-  static const double closeUpScale = 2.0;
+  static const double closeUpScale = 1.7;
 
   final MaxitoController controller;
   final MaxitoBlink _blink;
@@ -174,7 +175,8 @@ class MaxitoCharacter extends PositionComponent
     // while Sebastián is in front of the camera he waits at the right edge, still tappable
     final home = Vector2(spot + (view.x * 0.88 - spot) * _aside, feet);
     // close-up: scaled around the feet, a bit right of centre so Sebastián stays tappable at the left
-    final close = Vector2(view.x * 0.58, view.y + height * 0.40);
+    final header = hudBottom > 0 ? hudBottom : view.y * 0.23;
+    final close = Vector2(view.x * 0.58, header + 12 + height * closeUpScale); // head top right under the header
     final target = controller.state.isCloseUp ? 1.0 : 0.0;
     final step = dt * (target > _zoom ? 1 / zoomInSeconds : 1 / zoomOutSeconds);
     _zoom = target > _zoom ? min(target, _zoom + step) : max(target, _zoom - step);
@@ -266,7 +268,7 @@ class MaxitoCharacter extends PositionComponent
       final data = anim.data!;
       paintAnimFrame(canvas, frame, data, w, h, _paint);
       final head = data.headInBox(anim.frameIndex, w, h) ?? ui.Offset(w / 2, 0);
-      _tag.paint(canvas, head - const ui.Offset(0, 4));
+      if (!speaking.contains('maxito')) _tag.paint(canvas, head - const ui.Offset(0, 4));
       canvas.restore();
       return;
     }
@@ -289,7 +291,7 @@ class MaxitoCharacter extends PositionComponent
     );
     _drawLids(canvas, img, w, h, sx, sy);
     // his name rides on his head: same transform as the body
-    _tag.paint(canvas, ui.Offset(w / 2, -4), opacity: (1 - _zoom * 4).clamp(0.0, 1.0));
+    _tag.paint(canvas, ui.Offset(w / 2, -4), opacity: speaking.contains('maxito') ? 0 : (1 - _zoom * 4).clamp(0.0, 1.0));
     canvas.restore();
 
     if (controller.state == MaxitoState.playful) {

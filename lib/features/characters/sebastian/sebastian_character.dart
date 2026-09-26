@@ -4,6 +4,7 @@ import 'package:flame/events.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 
+import '../../../app_state.dart';
 import '../../../game.dart';
 import '../../room/room_layout.dart';
 import '../maxito/maxito_state.dart';
@@ -128,8 +129,13 @@ class SebastianCharacter extends PositionComponent
   /// Where he stands while talking to the player: centred and low, so the
   /// close-up puts his face right in front of the camera.
   /// A bit left of centre, so Maxito, stepped aside to the right, stays tappable.
-  Vector2 get _closeUpPosition =>
-      Vector2(game.size.x * 0.42, game.size.y * 0.74);
+  Vector2 get _closeUpPosition {
+    // feet placed so the top of his head (zoomed around the eye line) sits right under the header
+    final header = hudBottom > 0 ? hudBottom : game.size.y * 0.23;
+    final h = characterHeight;
+    final feet = header + 12 + h * ((1 - eyeLine) + eyeLine * SebastianAnimator.focusZoom);
+    return Vector2(game.size.x * 0.42, feet);
+  }
 
   @override
   void update(double dt) {
@@ -206,7 +212,7 @@ class SebastianCharacter extends PositionComponent
   void _paintTag(Canvas canvas, [Offset? head]) {
     // hidden while he is in the close-up
     final zoom = animator.pose.zoom;
-    final opacity = (1 - (zoom - 1) * 4).clamp(0.0, 1.0);
+    final opacity = speaking.contains('sebastian') ? 0.0 : (1 - (zoom - 1) * 4).clamp(0.0, 1.0);
     _tag.paint(canvas, (head ?? Offset(size.x / 2, 0)) - const Offset(0, 4), opacity: opacity);
   }
 

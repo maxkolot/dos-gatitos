@@ -60,6 +60,7 @@ class Sleep extends ChangeNotifier {
   /// «Dormir»: the night cinematic starts, the 8 hours start counting.
   Future<void> start() async {
     if (active) return;
+    if (wish.value == TamagotchiAction.dormir) wish.value = null;
     _until = DateTime.now().add(night);
     _phase = SleepPhase.cinematic;
     notifyListeners();

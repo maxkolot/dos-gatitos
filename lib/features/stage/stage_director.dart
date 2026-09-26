@@ -100,6 +100,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
   /// Runs an action: stats (Tamagotchi core) + what the player sees and hears.
   ActionResult? act(TamagotchiAction action, {String? conQuien}) {
     final result = tamagotchi.activar(action, conQuien: conQuien);
+    if (wish.value == action) wish.value = null; // they got what they asked for
     _bubbles.clear(); // an action interrupts whatever they were chatting about
     _nextChat = _clock + 30; // an action is a conversation of its own
     switch (action) {
@@ -144,6 +145,48 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
       say(LineSpeaker.maxito, _pick(const ['¡Temazo!', 'Esta es para vos, Sebas.', '¡A bailar!']));
       sebastianAnim.play(_dance, seconds: 34, onDone: () => Music.instance.fadeTo('casa'));
     });
+  }
+
+  // ---------------------------------------------------------------------------
+  // wishes: they ask for what they miss, and the HUD lights that button
+  // ---------------------------------------------------------------------------
+
+  double _nextWishCheck = 20;
+  double _wishAge = 0;
+
+  void _checkWishes(double dt) {
+    if (wish.value != null) {
+      _wishAge += dt;
+      if (_wishAge > 30) wish.value = null; // they forgot about it
+      return;
+    }
+    if (_clock < _nextWishCheck || _busy || _someoneFocused || Sleep.instance.active) return;
+    _nextWishCheck = _clock + 25 + _rnd.nextDouble() * 15;
+    ({LineSpeaker who, StatKind kind, double v})? low;
+    for (final (who, c) in [(LineSpeaker.sebastian, tamagotchi.sebastian), (LineSpeaker.maxito, tamagotchi.maxito)]) {
+      for (final (kind, v) in [(StatKind.energia, c.energia), (StatKind.animo, c.animo), (StatKind.carino, c.carino), (StatKind.social, c.social)]) {
+        if (v < 55 && (low == null || v < low.v)) low = (who: who, kind: kind, v: v);
+      }
+    }
+    if (low == null) return;
+    final night = DateTime.now().hour >= 22 || DateTime.now().hour < 7;
+    final action = switch (low.kind) {
+      StatKind.energia => night ? TamagotchiAction.dormir : TamagotchiAction.cenar,
+      StatKind.animo => TamagotchiAction.ponerMusica,
+      StatKind.carino => TamagotchiAction.darUnAbrazo,
+      StatKind.social => TamagotchiAction.hablar,
+    };
+    final seb = low.who == LineSpeaker.sebastian;
+    final line = switch (action) {
+      TamagotchiAction.dormir => seb ? 'Estoy muerto… ¿dormimos? Da?' : 'No puedo más, necesito dormir.',
+      TamagotchiAction.cenar => seb ? 'Tengo un hambre, blyat… ¿hago milanesas?' : '¿Cenamos algo? Me muero de hambre.',
+      TamagotchiAction.ponerMusica => seb ? 'Qué día gris… ¿ponemos un disco?' : 'Pongamos música, porfa.',
+      TamagotchiAction.darUnAbrazo => seb ? 'Vení, gatito… necesito un abrazo.' : '¿Un abracito? Solo uno.',
+      _ => seb ? 'Contame algo, dale. Privet, ¿hay alguien?' : '¿Charlamos un rato?',
+    };
+    say(low.who, line);
+    wish.value = action;
+    _wishAge = 0;
   }
 
   /// Back from the rooftop chicken hunt: the play counts, and they comment on it.
@@ -324,6 +367,10 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     maxitoAnim.update(dt);
     duoAnim.update(dt);
     _bubbles.removeWhere((b) => _clock > b.end);
+    speaking
+      ..clear()
+      ..addAll(_bubbles.where((b) => _clock >= b.start).map((b) => b.speaker == LineSpeaker.sebastian ? 'sebastian' : 'maxito'));
+    _checkWishes(dt);
     _hearts.removeWhere((h) => _clock > h.born + 1.8);
 
     // they chat by themselves now and then, standing where they are, when nothing else is going on
@@ -459,10 +506,14 @@ class _Bubble {
     final w = tp.width + 20;
     final h = tp.height + 16;
     final cx = head.dx.clamp(w / 2 + 6, screenW - w / 2 - 6);
-    var rect = ui.Rect.fromLTWH(cx - w / 2, head.dy - 36 - h, w, h);
-    // two lines at once (one cuts in): stack them instead of overlapping
+    final minTop = hudBottom + 6; // never under the header
+    var rect = ui.Rect.fromLTWH(cx - w / 2, head.dy - 30 - h, w, h);
+    if (rect.top < minTop) rect = rect.shift(ui.Offset(0, minTop - rect.top));
+    // two lines at once (one cuts in): stack them — above if there is room, else below
     for (final other in placed) {
-      if (rect.overlaps(other)) rect = rect.shift(ui.Offset(0, other.top - rect.bottom - 8));
+      if (!rect.overlaps(other)) continue;
+      final up = rect.shift(ui.Offset(0, other.top - rect.bottom - 8));
+      rect = up.top >= minTop ? up : rect.shift(ui.Offset(0, other.bottom + 8 - rect.top));
     }
     final age = clock - start;
     final alpha = (math.min(age, end - clock) / 0.18).clamp(0.0, 1.0);

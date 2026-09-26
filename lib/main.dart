@@ -10,6 +10,7 @@ import 'features/audio/music.dart';
 import 'features/sleep/sleep.dart';
 import 'game.dart';
 import 'ui/game_hud.dart';
+import 'ui/guide.dart';
 import 'ui/minigame_overlay.dart';
 import 'ui/sleep_scene.dart';
 import 'ui/ready_signal.dart';
@@ -31,6 +32,7 @@ final Future<void> appReady = Future.wait<void>([
 ]).timeout(const Duration(seconds: 12), onTimeout: () => const []).then((_) async {
   await Sleep.instance.load(); // still night → countdown; morning → they wake up
   signalReady(); // web: the HTML video splash fades out
+  if (!Sleep.instance.active) unawaited(Guide.instance.showFirstTime());
   // the native apps may start the music right away; browsers need a first touch
   if (!kIsWeb) unawaited(Music.instance.start());
 });
@@ -60,6 +62,7 @@ class DosGatitosApp extends StatelessWidget {
               ),
               const Positioned.fill(child: GameHud()),
               const Positioned.fill(child: MiniGameOverlay()),
+              const Positioned.fill(child: GuideOverlay()),
               const Positioned.fill(child: SleepScene()),
               if (!hasHtmlSplash) Positioned.fill(child: SplashOverlay(ready: appReady)),
             ],

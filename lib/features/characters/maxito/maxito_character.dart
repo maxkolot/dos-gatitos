@@ -12,6 +12,7 @@ import '../../../app_state.dart';
 import '../../room/room_layout.dart';
 import '../name_tag.dart';
 import '../../anim/frame_anim.dart';
+import '../../stage/shadow.dart';
 import '../../stage/stage_director.dart';
 import '../sebastian/sebastian_character.dart';
 import 'maxito_blink.dart';
@@ -259,6 +260,7 @@ class MaxitoCharacter extends PositionComponent
     if (StageDirector.duoAnim.playing) return; // the pair is drawn by the director
     final w = size.x;
     final h = size.y;
+    if (_zoom < 0.05) paintShadow(canvas, ui.Offset(w / 2 + _animShift, h - 2), w * 0.85);
     // an action animation (the record player…) replaces the idle sprite while it plays
     final anim = StageDirector.maxitoAnim;
     final frame = anim.frame;

@@ -19,6 +19,8 @@ class FrameAnimData {
     this.heads = const [],
     this.duoHeads = const [],
     this.sequence,
+    this.finale,
+    this.finaleHold = 3,
   });
 
   final List<ui.Image> frames;
@@ -41,6 +43,10 @@ class FrameAnimData {
 
   /// Optional order of the frames (e.g. there and back again for slow talk scenes).
   final List<int>? sequence;
+
+  /// A frame shown once at the very end (e.g. leaning back full after the loop of eating).
+  final int? finale;
+  final double finaleHold;
 
   /// Head top of frame [i] inside the idle sprite box (see [paintAnimFrame]).
   ui.Offset? headInBox(int i, double boxWidth, double boxHeight) {
@@ -77,6 +83,8 @@ class FrameAnimData {
             ui.Offset(((p as List)[0] as num).toDouble(), (p[1] as num).toDouble()),
         ],
         sequence: (meta['sequence'] as List?)?.map((e) => (e as num).toInt()).toList(),
+        finale: (meta['finale'] as num?)?.toInt(),
+        finaleHold: (meta['finaleHold'] as num? ?? 3).toDouble(),
         duoHeads: [
           for (final pair in (meta['duoHeads'] as List? ?? const []))
             [
@@ -98,6 +106,7 @@ class FramePlayer {
   double _t = 0;
   double _limit = 0;
   VoidCallback? _onDone;
+  bool _inFinale = false;
 
   bool get playing => _data != null;
   FrameAnimData? get data => _data;
@@ -111,6 +120,7 @@ class FramePlayer {
     }
     _data = data;
     _t = 0;
+    _inFinale = false;
     _limit = seconds ?? (data.loop ? double.infinity : data.oneShotSeconds);
     _onDone = onDone;
   }
@@ -133,12 +143,21 @@ class FramePlayer {
     // after the app was in the background the first frame brings a huge dt:
     // continue where it was instead of skipping the whole animation
     _t += math.min(dt, 0.1);
-    if (_t >= _limit) stop();
+    if (_t < _limit) return;
+    final finale = _data?.finale;
+    if (finale != null && !_inFinale) {
+      _inFinale = true; // the closing frame, once
+      _t = 0;
+      _limit = _data!.finaleHold;
+      return;
+    }
+    stop();
   }
 
   int get frameIndex {
     final d = _data;
     if (d == null || d.frames.isEmpty) return 0;
+    if (_inFinale && d.finale != null) return d.finale!.clamp(0, d.frames.length - 1);
     final seq = d.sequence;
     final n = seq?.length ?? d.frames.length;
     var i = (_t * d.fps).floor();

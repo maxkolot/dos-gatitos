@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' show lerpDouble;
 
@@ -170,6 +171,7 @@ class _Countdown extends StatefulWidget {
 
 class _CountdownState extends State<_Countdown> {
   bool _showSkip = false;
+  Timer? _tick;
 
   @override
   void initState() {
@@ -177,6 +179,16 @@ class _CountdownState extends State<_Countdown> {
     Future<void>.delayed(const Duration(seconds: 2), () {
       if (mounted) setState(() => _showSkip = true);
     });
+    // the screen counts down by itself (the parent rebuilds a const widget, which Flutter skips)
+    _tick = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _tick?.cancel();
+    super.dispose();
   }
 
   String _fmt(Duration d) {

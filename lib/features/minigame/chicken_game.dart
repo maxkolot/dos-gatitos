@@ -7,6 +7,8 @@ import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
+import '../stage/shadow.dart';
+
 /// «Atrapá las gallinas»: black-cat Sebastián on a Barcelona rooftop.
 ///
 /// Chickens run across the terrace (sometimes they hop, they panic when the cat
@@ -199,6 +201,15 @@ class _Cat extends SpriteComponent with HasGameReference<ChickenGame> {
 
   bool get ready => _state == _CatState.idle;
 
+  @override
+  void render(Canvas canvas) {
+    // local coordinates: the floor is below the anchor by how high he is now
+    final lift = ((game.floorY - position.y) / size.y).clamp(0.0, 1.0);
+    final floorY = size.y * anchor.y + (game.floorY - position.y);
+    paintShadow(canvas, Offset(size.x / 2, floorY - 2), size.x * 0.7, lift: lift);
+    super.render(canvas);
+  }
+
   void _face(double dir) {
     if (dir == 0 || dir == _dir) return;
     _dir = dir;
@@ -288,6 +299,14 @@ class _Chicken extends SpriteComponent with HasGameReference<ChickenGame> {
   double get velocity => dir * speed * (_scared > 0 ? 1.5 : 1.0);
 
   bool get onScreen => position.x > 0 && position.x < game.size.x;
+
+  @override
+  void render(Canvas canvas) {
+    final lift = ((game.floorY - position.y) / size.y).clamp(0.0, 1.0);
+    final floorY = size.y * anchor.y + (game.floorY - position.y);
+    paintShadow(canvas, Offset(size.x / 2, floorY - 2), size.x * 0.6, lift: lift);
+    super.render(canvas);
+  }
   Vector2 get centre => position - Vector2(0, size.y * 0.5);
 
   void fit(Vector2 view) {

@@ -15,6 +15,7 @@ import '../characters/sebastian/sebastian_character.dart';
 import '../events/dialogues.dart';
 import '../events/models.dart';
 import '../room/room_layout.dart';
+import 'shadow.dart';
 import '../sleep/sleep.dart';
 import '../../ui/minigame_overlay.dart';
 import '../tamagotchi/tamagotchi.dart';
@@ -219,10 +220,10 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     say(LineSpeaker.maxito, _pick(const ['¿Milanesas? ¡Te amo!', '¡Qué rico huele, Sebas!', 'Yo pongo la mesa.']));
     say(LineSpeaker.sebastian, _pick(const ['Receta de mi vieja, no se discute.', 'A la napolitana, como en Buenos Aires.']), delay: 3.2);
     sebastianAnim.play(_cook, onDone: () {
-      duoAnim.play(_dinner);
+      duoAnim.play(_dinner, seconds: 16); // then the «full» frame once
       say(LineSpeaker.sebastian, _pick(const ['¡A comer!', 'Con limón, obvio.', 'Las mejores milanesas de Barcelona.']));
       say(LineSpeaker.maxito, _pick(const ['Mmm… casate conmigo otra vez.', 'Dame un bocado del tuyo.', 'Esto es mejor que cualquier restaurante.']), delay: 6);
-      _burst(5, delay: 13);
+      _burst(5, delay: 16.5);
     });
   }
 
@@ -392,6 +393,12 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     final placed = _duoPlacement();
     final frame = duoAnim.frame;
     if (placed != null && frame != null) {
+      final data = duoAnim.data!;
+      paintShadow(
+        canvas,
+        ui.Offset(placed.dst.left + data.centerX * placed.k, placed.dst.top + data.feetY * placed.k - 3),
+        placed.dst.width * 0.75,
+      );
       canvas.drawImageRect(
         frame,
         ui.Rect.fromLTWH(0, 0, frame.width.toDouble(), frame.height.toDouble()),

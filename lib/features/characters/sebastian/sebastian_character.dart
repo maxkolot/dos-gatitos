@@ -10,6 +10,7 @@ import '../../room/room_layout.dart';
 import '../maxito/maxito_state.dart';
 import '../name_tag.dart';
 import '../../anim/frame_anim.dart';
+import '../../stage/shadow.dart';
 import '../../stage/stage_director.dart';
 import 'sebastian_animation.dart';
 
@@ -176,6 +177,7 @@ class SebastianCharacter extends PositionComponent
     final sprite = _sprite;
     if (sprite == null) return;
     if (StageDirector.duoAnim.playing) return; // the pair is drawn by the director
+    if (!animator.isFocused) paintShadow(canvas, Offset(size.x / 2, size.y - 2), size.x * 0.85);
     // an action animation (dance…) replaces the idle sprite while it plays
     final anim = StageDirector.sebastianAnim;
     final frame = anim.frame;

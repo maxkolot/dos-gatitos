@@ -37,7 +37,7 @@ jobs:
       - name: Build unsigned iOS app
         run: |
           flutter pub get
-          flutter build ios --release --no-codesign
+          flutter build ios --release --no-codesign --build-name=1.0.${{ github.run_number }} --build-number=${{ github.run_number }}
 
       - name: Package IPA for AltStore / SideStore
         run: |
@@ -123,11 +123,11 @@ jobs:
                 "category": "games",
                 "versions": [
                   {
-                    "version": "1.0.0",
-                    "buildVersion": "1",
+                    "version": "1.0.${{ github.run_number }}",
+                    "buildVersion": "${{ github.run_number }}",
                     "date": "$RELEASE_DATE",
-                    "localizedDescription": "Primera versión instalable.",
-                    "downloadURL": "https://maxkolot.github.io/dos-gatitos/downloads/DosGatitos.ipa",
+                    "localizedDescription": "Build ${{ github.run_number }} (${GITHUB_SHA::7})",
+                    "downloadURL": "https://maxkolot.github.io/dos-gatitos/downloads/DosGatitos.ipa?v=${GITHUB_SHA::7}",
                     "size": $IPA_SIZE,
                     "minOSVersion": "15.0"
                   }

@@ -93,7 +93,7 @@ class GuideOverlay extends StatelessWidget {
                             'Cuando les falta algo te lo piden, y el botón que necesitan brilla. ¡Hacelos felices!'),
                         row([ic(Icons.touch_app_rounded, _cream)], 'Tocá a uno de los dos y se acerca a vos.'),
                         row([ic(Icons.nightlight_round, _gold)], 'La luna los manda a dormir: vuelven en 8 horas con toda la energía.'),
-                        row([ic(Icons.toys_rounded, _cream)], '«Jugar» abre el juego de la azotea: tocá cuando una gallina tiene el círculo dorado y Sebas salta.'),
+                        row([ic(Icons.toys_rounded, _cream)], '«Jugar» abre el juego de la azotea: tocá una gallina y Sebas salta a atraparla.'),
                         const SizedBox(height: 4),
                         SizedBox(
                           width: double.infinity,

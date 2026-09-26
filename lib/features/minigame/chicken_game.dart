@@ -10,10 +10,10 @@ import 'package:flutter/painting.dart';
 /// «Atrapá las gallinas»: black-cat Sebastián on a Barcelona rooftop.
 ///
 /// Chickens run across the terrace (sometimes they hop, they panic when the cat
-/// comes close, a rare golden one is worth 5). The cat waits crouched; a tap
-/// anywhere makes him pounce on the nearest chicken (he aims ahead by himself).
-/// A gold ring marks the chicken that is in reach right now — tap then. A chicken
-/// that is hopping when he lands gets away. A round lasts [roundSeconds].
+/// comes close, a rare golden one is worth 5). Tap a chicken (or near it) and the
+/// cat leaps on it — he aims ahead by himself; tap the floor and he runs there,
+/// then waits crouched. A chicken that is hopping when he lands gets away.
+/// A round lasts [roundSeconds].
 class ChickenGame extends FlameGame with TapCallbacks {
   ChickenGame({this.roundSeconds = 30});
 
@@ -52,7 +52,7 @@ class ChickenGame extends FlameGame with TapCallbacks {
     _s = {for (final n in names) n: Sprite(await _img.load('$n.webp'))};
     _bg = SpriteComponent(sprite: _s['bg_roof'], priority: -10);
     _cat = _Cat();
-    await addAll([_bg, _cat, _Ring()]);
+    await addAll([_bg, _cat]);
     _layout(size);
   }
 
@@ -121,30 +121,26 @@ class ChickenGame extends FlameGame with TapCallbacks {
     add(c);
   }
 
-  /// How far one pounce reaches.
-  double get leapRange => size.x * 0.5;
-
-  /// The chicken a pounce would go for now, and where it will be when he lands.
-  ({_Chicken chicken, double landX, bool inReach})? aim() {
-    ({_Chicken chicken, double landX, bool inReach})? best;
-    for (final c in _chickens.where((c) => !c.caught && c.onScreen)) {
-      final landX = c.position.x + c.velocity * _Cat.jumpTime; // he aims ahead by himself
-      final d = (landX - _cat.position.x).abs();
-      if (best == null || d < (best.landX - _cat.position.x).abs()) {
-        best = (chicken: c, landX: landX, inReach: d <= leapRange);
-      }
-    }
-    return best;
-  }
-
   @override
   void onTapDown(TapDownEvent event) {
     if (!running.value) return;
-    final target = aim();
-    if (target == null) return;
-    final dx = target.landX - _cat.position.x;
-    // out of reach: he still jumps towards it, as far as he can
-    _cat.leapTo(_cat.position.x + dx.clamp(-leapRange, leapRange));
+    final p = event.canvasPosition;
+    // the chicken the player meant: nearest to the tap, generous radius
+    _Chicken? target;
+    var best = double.infinity;
+    for (final c in _chickens.where((c) => !c.caught)) {
+      final d = c.centre.distanceTo(p);
+      if (d < c.size.y * 1.4 && d < best) {
+        best = d;
+        target = c;
+      }
+    }
+    if (target != null) {
+      // leap to where it will be when he lands
+      _cat.leapTo(target.position.x + target.velocity * _Cat.jumpTime);
+    } else {
+      _cat.runTo(p.x);
+    }
   }
 
   /// The cat landed at [x]: every chicken under his paws is caught.
@@ -351,27 +347,3 @@ class _Chicken extends SpriteComponent with HasGameReference<ChickenGame> {
   }
 }
 
-/// A gold ring over the chicken a pounce would catch right now — the moment to tap.
-class _Ring extends Component with HasGameReference<ChickenGame> {
-  _Ring() : super(priority: 6);
-
-  double _t = 0;
-  final Paint _paint = Paint()
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 3;
-
-  @override
-  void update(double dt) => _t += dt;
-
-  @override
-  void render(Canvas canvas) {
-    if (!game.running.value) return;
-    final a = game.aim();
-    if (a == null || !a.inReach || a.chicken.inAir) return;
-    final c = a.chicken;
-    final pulse = 0.5 + 0.5 * math.sin(_t * 9);
-    _paint.color = Color.fromRGBO(255, 208, 138, 0.55 + 0.45 * pulse);
-    final r = c.size.x * (0.55 + 0.08 * pulse);
-    canvas.drawCircle((c.position - Vector2(0, c.size.y * 0.5)).toOffset(), r, _paint);
-  }
-}

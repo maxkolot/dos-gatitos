@@ -2,8 +2,10 @@ import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 
 import '../../../game.dart';
+import '../../room/room_layout.dart';
 import 'sebastian_animation.dart';
 
 export 'sebastian_animation.dart';
@@ -20,13 +22,21 @@ export 'sebastian_animation.dart';
 class SebastianCharacter extends PositionComponent
     with HasGameReference<DosGatitosGame>, TapCallbacks {
   SebastianCharacter({
-    this.characterHeight = 132,
+    this.heightFraction = 0.40,
     Vector2? position,
     this.autoExitAfter,
   }) : _fixedPosition = position;
 
-  /// Rendered sprite height in logical pixels (width follows the aspect ratio).
-  final double characterHeight;
+  /// Rendered height as a share of the screen height (width follows the art).
+  final double heightFraction;
+
+  /// Eye line of the full-body art, as a fraction of the sprite height: the
+  /// close-up scales around it, so the face grows towards the camera.
+  static const double eyeLine = 0.11;
+
+  double _aspect = 0.33;
+
+  double get characterHeight => (game.size.y * heightFraction).clamp(120.0, 520.0);
 
   /// Optional fixed position (bottom-centre anchor). Default: bottom-left of
   /// the flat, so he never hides the cats.
@@ -53,20 +63,25 @@ class SebastianCharacter extends PositionComponent
   @override
   Future<void> onLoad() async {
     anchor = Anchor.bottomCenter;
-    priority = 3; // above the cats, below modal UI
-    size = Vector2(characterHeight * 0.85, characterHeight);
+    priority = 3; // above the room, below modal UI
+    size = Vector2(characterHeight * _aspect, characterHeight);
 
     try {
       final image = await _images.load('sebastian_idle.png');
       _sprite = Sprite(image);
       final src = _sprite!.srcSize;
-      if (src.y > 0) size = Vector2(characterHeight * (src.x / src.y), characterHeight);
+      if (src.y > 0) _aspect = src.x / src.y;
+      size = Vector2(characterHeight * _aspect, characterHeight);
     } catch (_) {
       _sprite = null;
     }
     try {
-      final image = await _images.load('sebastian_blink.png');
-      _blinkSprite = Sprite(image);
+      // optional frame: only ask for it when it is part of the build (a missing
+      // asset is reported as an error even when caught)
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      if (manifest.listAssets().contains('assets/characters/sebastian/sebastian_blink.png')) {
+        _blinkSprite = Sprite(await _images.load('sebastian_blink.png'));
+      }
     } catch (_) {
       // No closed-eyes frame: blinks are simply skipped.
       _blinkSprite = null;
@@ -82,9 +97,15 @@ class SebastianCharacter extends PositionComponent
     super.onRemove();
   }
 
-  Vector2 get _basePosition =>
-      _fixedPosition?.clone() ??
-      Vector2(game.size.x * 0.22, game.size.y - 14);
+  /// Left of the pair, feet on the room's floor line.
+  Vector2 get _basePosition {
+    final fixed = _fixedPosition;
+    if (fixed != null) return fixed.clone();
+    final canvas = Size(game.size.x, game.size.y);
+    final room = RoomLayout(canvas: canvas);
+    final feet = room.floorLineY.clamp(characterHeight, game.size.y - 6.0);
+    return Vector2(room.toCanvas(const Offset(0.37, 0)).dx, feet);
+  }
 
   /// Where he stands while talking to the player: centred and low, so the
   /// close-up puts his face right in front of the camera.
@@ -93,6 +114,7 @@ class SebastianCharacter extends PositionComponent
 
   @override
   void update(double dt) {
+    size.setValues(characterHeight * _aspect, characterHeight); // follows rotation / resize
     animator.update(dt);
     final pose = animator.pose;
 
@@ -125,7 +147,7 @@ class SebastianCharacter extends PositionComponent
 
     // Scale around the eye line: he grows towards the camera the way a face
     // does, instead of inflating from the floor.
-    final eye = Offset(size.x / 2, size.y * 0.30);
+    final eye = Offset(size.x / 2, size.y * eyeLine);
 
     canvas.save();
     canvas.translate(0, pose.offsetY);
@@ -187,7 +209,7 @@ class SebastianCharacter extends PositionComponent
   @override
   bool containsLocalPoint(Vector2 point) {
     final pose = animator.pose;
-    final eye = Vector2(size.x / 2, size.y * 0.30);
+    final eye = Vector2(size.x / 2, size.y * eyeLine);
     final zoom = pose.zoom == 0 ? 1.0 : pose.zoom;
     final stretch = pose.stretch == 0 ? 1.0 : pose.stretch;
     final lx = eye.x + (point.x - eye.x) / zoom;

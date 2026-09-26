@@ -22,7 +22,7 @@ class RoomScene extends Component with HasGameReference<FlameGame> {
 
   /// The only background asset of the room. Path is stable — the integrator may
   /// reuse it for a widget based HUD (`RoomBackdrop`).
-  static const String backgroundAsset = 'assets/room/bg_room.png';
+  static const String backgroundAsset = 'assets/room/bg_room.webp';
 
   /// Draws the zone rectangles + ids on top of the room (debug only).
   final bool showZoneDebug;
@@ -48,7 +48,7 @@ class RoomScene extends Component with HasGameReference<FlameGame> {
 
   Object? get loadError => _loadError;
   final Paint _paint = Paint()
-    ..filterQuality = FilterQuality.none; // crisp pixels, no blur
+    ..filterQuality = FilterQuality.medium; // painted art is scaled down on phones: no shimmering
   final Paint _zoneFill = Paint()..color = const Color(0x33FF8A3D);
   final Paint _zoneStroke = Paint()
     ..color = const Color(0xCCFFD08A)

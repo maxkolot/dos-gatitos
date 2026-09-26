@@ -3,17 +3,18 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 
-/// Design size of `assets/room/bg_room.png` (portrait 430x932 scaled by ~1.65).
+/// Design size of `assets/room/bg_room.webp` (portrait 2:3).
 ///
-/// Both target screens, 390x844 (0.4621) and 430x932 (0.4613), are within 0.2%
-/// of this ratio, so the background is drawn with [BoxFit.cover]: it is only
-/// cropped by a pixel or two, never stretched.
-const double roomArtWidth = 708;
+/// Phones (390x844, 430x932) are narrower than the art: it is drawn with
+/// [BoxFit.cover] and loses ~15% on each side — the furniture that matters sits
+/// in the central 70%. Wider canvases (desktop, tablets) fit the height instead,
+/// so the floor never leaves the screen.
+const double roomArtWidth = 1024;
 const double roomArtHeight = 1536;
 
 /// Normalized (0..1, top-left origin) horizontal line where the floor meets the
 /// wall furniture — the line characters stand on.
-const double roomFloorLine = 0.795;
+const double roomFloorLine = 0.90;
 
 /// Height of the top strip that stays free for the HUD (title + score).
 /// Nothing interactive and no character may be placed above this line.
@@ -56,11 +57,13 @@ class RoomZone {
 
 /// The four interactive zones of the flat + the plants (decor, optional).
 abstract final class RoomZones {
-  static const sofa = RoomZone(id: 'sofa', label: 'Sofá', left: 0.300, top: 0.530, width: 0.440, height: 0.270);
-  static const table = RoomZone(id: 'table', label: 'Mesa', left: 0.360, top: 0.720, width: 0.290, height: 0.150);
-  static const window = RoomZone(id: 'window', label: 'Ventana / balcón', left: 0.055, top: 0.140, width: 0.305, height: 0.380);
-  static const music = RoomZone(id: 'music', label: 'Música', left: 0.655, top: 0.470, width: 0.290, height: 0.300);
-  static const plants = RoomZone(id: 'plants', label: 'Plantas', left: 0.020, top: 0.550, width: 0.170, height: 0.330);
+  // measured on bg_room.webp (see docs/art/character_sheet.webp for the cast)
+  static const sofa = RoomZone(id: 'sofa', label: 'Sofá', left: 0.100, top: 0.400, width: 0.370, height: 0.160);
+  static const table = RoomZone(id: 'table', label: 'Mesa', left: 0.350, top: 0.490, width: 0.290, height: 0.080);
+  static const window = RoomZone(id: 'window', label: 'Ventana / balcón', left: 0.400, top: 0.160, width: 0.300, height: 0.340);
+  // the record player sits at the right edge: on narrow phones only its left part is on screen
+  static const music = RoomZone(id: 'music', label: 'Música', left: 0.840, top: 0.430, width: 0.140, height: 0.190);
+  static const plants = RoomZone(id: 'plants', label: 'Plantas', left: 0.720, top: 0.300, width: 0.140, height: 0.240);
 
   /// Zones the gameplay may interact with, in a stable order.
   static const List<RoomZone> all = [sofa, table, window, music, plants];
@@ -85,8 +88,15 @@ class RoomLayout {
   /// Logical canvas (game) size.
   final Size canvas;
 
-  /// Cover scale: art is scaled up until it fills the whole canvas.
-  double get scale => math.max(canvas.width / artSize.width, canvas.height / artSize.height);
+  /// Cover scale on canvases narrower than the art (phones); on wider ones the
+  /// height fits, so the floor and the characters always stay on screen.
+  double get scale {
+    if (canvas.isEmpty) return 1;
+    final wider = canvas.width / canvas.height > artSize.width / artSize.height;
+    return wider
+        ? canvas.height / artSize.height
+        : math.max(canvas.width / artSize.width, canvas.height / artSize.height);
+  }
 
   /// Where the art lands on the canvas (may stick out on the sides).
   Rect get roomRect {
@@ -132,7 +142,7 @@ class RoomLayout {
   Offset standPoint(String id, {double height = 96}) {
     final rect = zoneRectById(id);
     final x = rect.isEmpty ? canvas.width / 2 : rect.center.dx;
-    return Offset(x, floorLineY - height / 2);
+    return Offset(x.clamp(canvas.width * 0.1, canvas.width * 0.9), floorLineY - height / 2);
   }
 
   /// Which zone is under a canvas point (top-most first), or null.

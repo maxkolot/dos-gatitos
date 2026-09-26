@@ -41,6 +41,8 @@ class TamagotchiLoop extends ChangeNotifier {
   Duration _pendienteDeGuardar = Duration.zero;
   bool _cargado = false;
   bool _guardando = false;
+  bool _guardadoPendiente = false;
+  Future<void>? _guardadoEnCurso;
   String? _error;
   OfflineReport? _informeBienvenida;
 
@@ -176,18 +178,40 @@ class TamagotchiLoop extends ChangeNotifier {
   }
 
   /// Guarda ya (por ejemplo cuando la app pasa a segundo plano).
-  Future<void> guardar({bool forzar = false}) async {
-    if (_guardando) return;
-    if (!forzar && !_cargado) return;
+  ///
+  /// Si llega otra petición mientras el almacenamiento todavía está escribiendo,
+  /// no se pierde: se agrupa y al terminar se vuelve a escribir el estado más
+  /// reciente. Así una acción rápida nunca queda fuera del guardado por una
+  /// escritura anterior todavía en curso.
+  Future<void> guardar({bool forzar = false}) {
+    if (!forzar && !_cargado) return Future<void>.value();
+
+    _guardadoPendiente = true;
+    final enCurso = _guardadoEnCurso;
+    if (enCurso != null) return enCurso;
+
+    final ciclo = _drenarGuardados();
+    _guardadoEnCurso = ciclo;
+    return ciclo;
+  }
+
+  Future<void> _drenarGuardados() async {
     _guardando = true;
     try {
-      await _store.escribir(_estado);
-      _error = null;
-    } catch (e) {
-      _error = 'No se pudo guardar la partida: $e';
-      notifyListeners();
+      while (_guardadoPendiente) {
+        _guardadoPendiente = false;
+        final estadoAEscribir = _estado;
+        try {
+          await _store.escribir(estadoAEscribir);
+          _error = null;
+        } catch (e) {
+          _error = 'No se pudo guardar la partida: $e';
+          notifyListeners();
+        }
+      }
     } finally {
       _guardando = false;
+      _guardadoEnCurso = null;
     }
   }
 

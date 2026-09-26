@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dos_gatitos/features/tamagotchi/tamagotchi.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -188,6 +190,34 @@ void main() {
   });
 
   test(
+    'una escritura lenta no pierde cambios hechos mientras estaba guardando',
+    () async {
+      final store = _StoreLento();
+      final loop = TamagotchiLoop(store: store, reloj: reloj);
+      await loop.cargar();
+
+      final primerGuardado = loop.guardar(forzar: true);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(store.intentos, hasLength(1));
+      expect(store.intentos.single.relacion.momentos, 0);
+
+      loop.activar(TamagotchiAction.jugar);
+      loop.activar(TamagotchiAction.ponerMusica);
+      expect(loop.momentos, 2);
+
+      store.liberarPrimeraEscritura();
+      await primerGuardado;
+
+      expect(store.intentos, hasLength(2));
+      expect(store.intentos.last.relacion.momentos, 2);
+      expect(store.ultimoEstado?.relacion.momentos, 2);
+
+      loop.dispose();
+    },
+  );
+
+  test(
     'un almacén que falla no rompe el bucle: sólo avisa por error',
     () async {
       final loop = TamagotchiLoop(store: _StoreRoto(), reloj: reloj);
@@ -205,6 +235,31 @@ void main() {
       loop.dispose();
     },
   );
+}
+
+class _StoreLento implements TamagotchiStore {
+  final Completer<void> _primeraEscritura = Completer<void>();
+  final List<TamagotchiState> intentos = <TamagotchiState>[];
+  TamagotchiState? ultimoEstado;
+
+  void liberarPrimeraEscritura() {
+    if (!_primeraEscritura.isCompleted) _primeraEscritura.complete();
+  }
+
+  @override
+  Future<TamagotchiState?> leer() async => null;
+
+  @override
+  Future<void> escribir(TamagotchiState estado) async {
+    intentos.add(estado);
+    if (intentos.length == 1) await _primeraEscritura.future;
+    ultimoEstado = estado;
+  }
+
+  @override
+  Future<void> borrar() async {
+    ultimoEstado = null;
+  }
 }
 
 class _StoreRoto implements TamagotchiStore {

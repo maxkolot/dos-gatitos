@@ -16,6 +16,7 @@ import '../events/dialogues.dart';
 import '../events/models.dart';
 import '../room/room_layout.dart';
 import '../sleep/sleep.dart';
+import '../../ui/minigame_overlay.dart';
 import '../tamagotchi/tamagotchi.dart';
 
 /// Who is on screen, what they play and say: runs the HUD actions (animations,
@@ -78,6 +79,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     _dinner = loaded[5];
     _nextChat = 60;
     Sleep.instance.onWake = _goodMorning;
+    MiniGame.instance.onClosed = _backFromRoof;
     _playLines(_hello[_rnd.nextInt(_hello.length)], after: 6); // after the splash
     _hug = loaded[6];
   }
@@ -142,6 +144,22 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
       say(LineSpeaker.maxito, _pick(const ['¡Temazo!', 'Esta es para vos, Sebas.', '¡A bailar!']));
       sebastianAnim.play(_dance, seconds: 34, onDone: () => Music.instance.fadeTo('casa'));
     });
+  }
+
+  /// Back from the rooftop chicken hunt: the play counts, and they comment on it.
+  void _backFromRoof(int? best) {
+    Music.instance.fadeTo('casa');
+    if (best == null) return; // left without playing
+    tamagotchi.activar(TamagotchiAction.jugar);
+    _stopAll();
+    _bubbles.clear();
+    _nextChat = _clock + 35;
+    final lines = best >= 15
+        ? [(_m, '¿$best gallinas? ¡Sos un tigre!', false), (_s, 'Da. Un tigre con anteojos. Spasibo.', false)]
+        : best >= 6
+            ? [(_m, '¿Cuántas atrapaste?', false), (_s, '$best. La dorada casi me gana, blyat.', false)]
+            : [(_m, '¿Y? ¿Cuántas?', false), (_s, '$best… las gallinas de Barcelona son rapidísimas, suka.', false), (_m, 'Mañana revancha.', false)];
+    _playLines(lines, after: 0.8);
   }
 
   /// After the night (or «Saltar»): back in the flat, rested.

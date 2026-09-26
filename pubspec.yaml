@@ -67,6 +67,8 @@ flutter:
     - assets/audio/
     - assets/splash/
     - assets/sleep/
+    - assets/minigame/
+    - assets/ui/
     - assets/characters/maxito/
     - assets/room/
 

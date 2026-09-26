@@ -10,6 +10,7 @@ import 'features/audio/music.dart';
 import 'features/sleep/sleep.dart';
 import 'game.dart';
 import 'ui/game_hud.dart';
+import 'ui/minigame_overlay.dart';
 import 'ui/sleep_scene.dart';
 import 'ui/ready_signal.dart';
 import 'ui/splash_overlay.dart';
@@ -58,6 +59,7 @@ class DosGatitosApp extends StatelessWidget {
                 ),
               ),
               const Positioned.fill(child: GameHud()),
+              const Positioned.fill(child: MiniGameOverlay()),
               const Positioned.fill(child: SleepScene()),
               if (!hasHtmlSplash) Positioned.fill(child: SplashOverlay(ready: appReady)),
             ],

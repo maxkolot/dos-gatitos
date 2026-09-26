@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../app_state.dart';
 import '../features/audio/music.dart';
 import '../features/sleep/sleep.dart';
+import 'minigame_overlay.dart';
 import '../features/characters/maxito/maxito_state.dart';
 import '../features/characters/sebastian/sebastian_character.dart';
 import '../features/stage/stage_director.dart';
@@ -49,6 +50,11 @@ class _GameHudState extends State<GameHud> {
 
   void _onAction(TamagotchiAction action) {
     Music.instance.start();
+    if (action == TamagotchiAction.jugar) {
+      Music.instance.fadeTo('baile', out: const Duration(milliseconds: 500), fadeIn: const Duration(milliseconds: 900));
+      MiniGame.instance.show(); // stats and lines come when they are back home
+      return;
+    }
     if (action == TamagotchiAction.preguntar) {
       _show('Tocá a Sebastián o a Maxito: se acercan a hablar. El chat llega pronto.');
       return;
@@ -87,6 +93,8 @@ class _GameHudState extends State<GameHud> {
           listenable: tamagotchi,
           builder: (context, _) => Column(
             children: [
+              Image.asset('assets/ui/logo.webp', height: 52, filterQuality: FilterQuality.medium),
+              const SizedBox(height: 4),
               _StatsPanel(),
               const Spacer(),
               AnimatedSwitcher(

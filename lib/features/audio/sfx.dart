@@ -22,6 +22,9 @@ class Sfx {
   static final Sfx instance = Sfx._();
 
   static const _maxPerSound = 3;
+
+  /// All effects sit well under the music.
+  static const double master = 0.45;
   final Map<String, List<AudioPlayer>> _pool = <String, List<AudioPlayer>>{};
   final Map<String, AudioPlayer> _loops = {};
   final Map<String, int> _loopIds = {};
@@ -81,7 +84,7 @@ class Sfx {
           await p.stop();
         }
       }
-      await p.play(AssetSource('sfx/$name.mp3'), volume: (v * volume).clamp(0.0, 1.0));
+      await p.play(AssetSource('sfx/$name.mp3'), volume: (v * volume * master).clamp(0.0, 1.0));
     } catch (e) {
       debugPrint('Sfx $name: $e');
     }
@@ -97,7 +100,7 @@ class Sfx {
     _loops[name] = p;
     try {
       await p.setReleaseMode(ReleaseMode.loop);
-      final target = (v * volume).clamp(0.0, 1.0);
+      final target = (v * volume * master).clamp(0.0, 1.0);
       await p.play(AssetSource('sfx/$name.mp3'), volume: fade > 0 ? 0 : target);
       if (fade > 0) await _ramp(p, 0, target, fade, () => _loopIds[name] == id);
     } catch (e) {

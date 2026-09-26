@@ -164,7 +164,7 @@ class MaxitoCharacter extends PositionComponent
 
     // --- layout: right of the pair, feet on the room's floor line ------------
     final view = game.size;
-    final height = (view.y * 0.52).clamp(120.0, 640.0);
+    final height = (view.y * 0.52).clamp(120.0, 640.0) * (1 - 0.12 * stageBack);
     final img = _image;
     final aspect = img == null || img.height == 0 ? 0.34 : img.width / img.height;
     size = Vector2(height * aspect, height);
@@ -175,7 +175,10 @@ class MaxitoCharacter extends PositionComponent
     _aside += (asideTarget - _aside) * (dt * 7).clamp(0.0, 1.0);
     final spot = room.toCanvas(const ui.Offset(0.65, 0)).dx;
     // while Sebastián is in front of the camera he waits at the right edge, still tappable
-    final home = Vector2(spot + (view.x * 0.88 - spot) * _aside, feet);
+    final home = Vector2(
+      spot + (view.x * 0.88 - spot) * _aside + view.x * (0.07 * stageBack + 0.36 * petZoom.value),
+      feet - view.y * 0.07 * stageBack,
+    );
     // close-up: scaled around the feet, a bit right of centre so Sebastián stays tappable at the left
     final header = hudBottom > 0 ? hudBottom : view.y * 0.23;
     final close = Vector2(view.x * 0.58, header + 12 + height * closeUpScale); // head top right under the header

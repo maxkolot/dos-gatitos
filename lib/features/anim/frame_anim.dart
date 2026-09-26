@@ -24,6 +24,7 @@ class FrameAnimData {
     this.finale,
     this.finaleHold = 3,
     this.cues = const {},
+    this.name = '',
     this.startCues = const [],
   });
 
@@ -55,6 +56,9 @@ class FrameAnimData {
   /// Sounds that go with a frame (`"sfx": {"2": ["sizzle_in", "loop:sizzle"]}` in
   /// the meta, see [Sfx.cue]); `"start"` plays when the animation starts.
   final Map<int, List<String>> cues;
+
+  /// `dance`, `hug`, `dinner`… (the file name).
+  final String name;
   final List<String> startCues;
 
   /// Head top of frame [i] inside the idle sprite box (see [paintAnimFrame]).
@@ -105,6 +109,7 @@ class FrameAnimData {
         finale: (meta['finale'] as num?)?.toInt(),
         finaleHold: (meta['finaleHold'] as num? ?? 3).toDouble(),
         cues: cues,
+        name: name,
         startCues: startCues,
         duoHeads: [
           for (final pair in (meta['duoHeads'] as List? ?? const []))

@@ -52,7 +52,7 @@ class SebastianCharacter extends PositionComponent
 
   final Paint _animPaint = Paint()..filterQuality = FilterQuality.medium;
 
-  double get characterHeight => (game.size.y * heightFraction).clamp(120.0, 640.0);
+  double get characterHeight => (game.size.y * heightFraction).clamp(120.0, 640.0) * (1 - 0.12 * stageBack);
 
   /// Optional fixed position (bottom-centre anchor). Default: bottom-left of
   /// the flat, so he never hides the cats.
@@ -159,6 +159,9 @@ class SebastianCharacter extends PositionComponent
       base.x + (close.x - base.x) * t,
       base.y + (close.y - base.y) * t,
     );
+    // the dance: a few steps back into the room; Sr. Fer asleep up close: out of the picture
+    position.x -= game.size.x * (0.07 * stageBack + 0.36 * petZoom.value);
+    position.y -= game.size.y * 0.07 * stageBack;
 
     if (animator.isFocused) {
       _focusTime += dt;

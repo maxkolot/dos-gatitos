@@ -40,6 +40,18 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
   static StageDirector? _instance;
   static StageDirector? get instance => _instance;
 
+  /// Top of [who]'s head on screen (in a duo scene: in the pair frame).
+  static ui.Offset? headOf(LineSpeaker who) => _instance?._headOf(who);
+
+  /// Height of one figure in the duo scene on screen (null when none plays).
+  static double? get duoFigureHeight {
+    final placed = _instance?._duoPlacement();
+    final data = duoAnim.data;
+    return placed == null || data == null ? null : data.refHeight * placed.k;
+  }
+
+  double _back = 0; // the dance: steps back into the room
+
   FrameAnimData? _dance;
   FrameAnimData? _record;
   FrameAnimData? _cook;
@@ -370,16 +382,13 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     sebastianAnim.update(dt);
     maxitoAnim.update(dt);
     duoAnim.update(dt);
+    final dancing = sebastianAnim.playing && sebastianAnim.data?.name == 'dance';
+    _back = dancing ? math.min(1, _back + dt / 1.6) : math.max(0, _back - dt / 1.4);
+    stageBack = _back < 0.5 ? 4 * _back * _back * _back : 1 - math.pow(-2 * _back + 2, 3) / 2;
     _bubbles.removeWhere((b) => _clock > b.end);
     speaking
       ..clear()
       ..addAll(_bubbles.where((b) => _clock >= b.start).map((b) => b.speaker == LineSpeaker.sebastian ? 'sebastian' : 'maxito'));
-    for (final b in _bubbles) {
-      if (!b.voiced && _clock >= b.start) {
-        b.voiced = true; // a few babbled syllables when a line appears
-        Sfx.instance.play(b.speaker == LineSpeaker.sebastian ? 'voice_seb@0.6' : 'voice_max@0.6', variants: 2);
-      }
-    }
     _checkWishes(dt);
     _hearts.removeWhere((h) => _clock > h.born + 1.8);
 
@@ -502,7 +511,6 @@ class _Bubble {
   final String text;
   final double start;
   final double end;
-  bool voiced = false;
   TextPainter? _tp;
   bool _laidOutWithFont = false;
 

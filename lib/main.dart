@@ -13,6 +13,7 @@ import 'game.dart';
 import 'ui/game_hud.dart';
 import 'ui/guide.dart';
 import 'ui/minigame_overlay.dart';
+import 'ui/pet_zoom.dart';
 import 'ui/sleep_scene.dart';
 import 'ui/ready_signal.dart';
 import 'ui/splash_overlay.dart';
@@ -58,9 +59,11 @@ class DosGatitosApp extends StatelessWidget {
             children: [
               // the widget owns the game: rebuilds and app restarts never re-attach a used instance
               Positioned.fill(
-                child: GameWidget<DosGatitosGame>.controlled(
-                  gameFactory: DosGatitosGame.new,
-                  errorBuilder: (context, error) => _GameError(error),
+                child: PetZoom(
+                  child: GameWidget<DosGatitosGame>.controlled(
+                    gameFactory: DosGatitosGame.new,
+                    errorBuilder: (context, error) => _GameError(error),
+                  ),
                 ),
               ),
               const Positioned.fill(child: GameHud()),

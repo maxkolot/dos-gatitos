@@ -212,47 +212,21 @@ class MaxitoCharacter extends PositionComponent
     if (img == null) return;
     final w = size.x;
     final h = size.y;
-    final neckY = h * neckLine;
-    final overlap = h * sliceOverlap;
     final sx = img.width / w;
     final sy = img.height / h;
 
-    // --- body slice: breathes around its bottom edge ------------------------
+    // One piece (the full-body art has no clean seam to split head from body):
+    // breathing scales him from the feet, the mood sway leans the whole figure a
+    // little around the feet, the bob lifts him; the eyelids ride along.
     canvas.save();
     canvas.translate(w / 2, h);
+    canvas.rotate(_sway * 0.25);
     canvas.scale(_bodyScaleX, _bodyScaleY);
-    canvas.translate(-w / 2 + _sideShift, -h);
-    // the same line in image pixels as the slice top on screen (neckY - overlap)
-    final bodySrcTop = (neckY - overlap) * sy;
-    final bodySrc = ui.Rect.fromLTWH(
-      0,
-      bodySrcTop,
-      img.width.toDouble(),
-      (img.height - bodySrcTop).clamp(0.0, img.height.toDouble()),
-    );
+    canvas.translate(-w / 2, -h + _bob);
     canvas.drawImageRect(
       img,
-      bodySrc,
-      ui.Rect.fromLTWH(0, neckY - overlap, w, h - neckY + overlap),
-      _paint,
-    );
-    canvas.restore();
-
-    // --- head slice: sways on the neck, eyelids follow it --------------------
-    canvas.save();
-    canvas.translate(w / 2, neckY);
-    canvas.rotate(_sway);
-    canvas.translate(-w / 2, -neckY + _bob);
-    final headSrc = ui.Rect.fromLTWH(
-      0,
-      0,
-      img.width.toDouble(),
-      ((neckY + overlap) * sy).clamp(0.0, img.height.toDouble()),
-    );
-    canvas.drawImageRect(
-      img,
-      headSrc,
-      ui.Rect.fromLTWH(0, 0, w, neckY + overlap),
+      ui.Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble()),
+      ui.Rect.fromLTWH(0, 0, w, h),
       _paint,
     );
     _drawLids(canvas, img, w, h, sx, sy);
@@ -262,9 +236,6 @@ class MaxitoCharacter extends PositionComponent
       _drawSparkles(canvas, w, h);
     }
   }
-
-  /// The head also drifts a hair sideways while it sways.
-  double get _sideShift => 0.006 * (_sway.isNegative ? -1 : 1);
 
   /// Closes the eyes with the skin band right above each eye, squashed over it.
   void _drawLids(ui.Canvas canvas, ui.Image img, double w, double h, double sx, double sy) {

@@ -22,7 +22,7 @@ export 'sebastian_animation.dart';
 class SebastianCharacter extends PositionComponent
     with HasGameReference<DosGatitosGame>, TapCallbacks {
   SebastianCharacter({
-    this.heightFraction = 0.40,
+    this.heightFraction = 0.52,
     Vector2? position,
     this.autoExitAfter,
   }) : _fixedPosition = position;
@@ -36,7 +36,7 @@ class SebastianCharacter extends PositionComponent
 
   double _aspect = 0.33;
 
-  double get characterHeight => (game.size.y * heightFraction).clamp(120.0, 520.0);
+  double get characterHeight => (game.size.y * heightFraction).clamp(120.0, 640.0);
 
   /// Optional fixed position (bottom-centre anchor). Default: bottom-left of
   /// the flat, so he never hides the cats.
@@ -104,7 +104,7 @@ class SebastianCharacter extends PositionComponent
     final canvas = Size(game.size.x, game.size.y);
     final room = RoomLayout(canvas: canvas);
     final feet = room.floorLineY.clamp(characterHeight, game.size.y - 6.0);
-    return Vector2(room.toCanvas(const Offset(0.37, 0)).dx, feet);
+    return Vector2(room.toCanvas(const Offset(0.35, 0)).dx, feet);
   }
 
   /// Where he stands while talking to the player: centred and low, so the

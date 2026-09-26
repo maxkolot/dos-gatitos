@@ -137,16 +137,16 @@ class MaxitoCharacter extends PositionComponent
 
     // --- layout: right of the pair, feet on the room's floor line ------------
     final view = game.size;
-    final height = (view.y * 0.40).clamp(120.0, 520.0);
+    final height = (view.y * 0.52).clamp(120.0, 640.0);
     final img = _image;
     final aspect = img == null || img.height == 0 ? 0.34 : img.width / img.height;
     size = Vector2(height * aspect, height);
 
     final room = RoomLayout(canvas: ui.Size(view.x, view.y));
     final feet = room.floorLineY.clamp(height, view.y - 6.0);
-    final home = Vector2(room.toCanvas(const ui.Offset(0.63, 0)).dx, feet);
+    final home = Vector2(room.toCanvas(const ui.Offset(0.65, 0)).dx, feet);
     // close-up: scaled around the feet, so they go below the screen and the face comes up front
-    final close = Vector2(view.x * 0.50, view.y + height * 0.25);
+    final close = Vector2(view.x * 0.50, view.y + height * 0.40);
     final target = controller.state.isCloseUp ? 1.0 : 0.0;
     final step = dt * (target > _zoom ? 1 / zoomInSeconds : 1 / zoomOutSeconds);
     _zoom = target > _zoom ? min(target, _zoom + step) : max(target, _zoom - step);

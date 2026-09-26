@@ -14,7 +14,7 @@ const double roomArtHeight = 1536;
 
 /// Normalized (0..1, top-left origin) horizontal line where the floor meets the
 /// wall furniture — the line characters stand on.
-const double roomFloorLine = 0.90;
+const double roomFloorLine = 0.93;
 
 /// Height of the top strip that stays free for the HUD (title + score).
 /// Nothing interactive and no character may be placed above this line.

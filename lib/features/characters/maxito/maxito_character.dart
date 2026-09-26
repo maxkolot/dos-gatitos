@@ -244,6 +244,7 @@ class MaxitoCharacter extends PositionComponent
     // one talks at a time: Sebastián steps back when Maxito is chosen
     if (Sebastian.isFocused) Sebastian.exitDialogue();
     if (StageDirector.maxitoAnim.playing) StageDirector.maxitoAnim.stop();
+    if (StageDirector.duoAnim.playing) StageDirector.duoAnim.cancel();
     if (controller.state == MaxitoState.sleepy) controller.wake();
     controller.focus();
     _blink.blinkNow();
@@ -253,6 +254,7 @@ class MaxitoCharacter extends PositionComponent
   void render(ui.Canvas canvas) {
     final img = _image;
     if (img == null) return;
+    if (StageDirector.duoAnim.playing) return; // the pair is drawn by the director
     final w = size.x;
     final h = size.y;
     // an action animation (the record player…) replaces the idle sprite while it plays

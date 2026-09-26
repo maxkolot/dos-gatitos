@@ -169,6 +169,7 @@ class SebastianCharacter extends PositionComponent
   void render(Canvas canvas) {
     final sprite = _sprite;
     if (sprite == null) return;
+    if (StageDirector.duoAnim.playing) return; // the pair is drawn by the director
     // an action animation (dance…) replaces the idle sprite while it plays
     final anim = StageDirector.sebastianAnim;
     final frame = anim.frame;
@@ -227,6 +228,7 @@ class SebastianCharacter extends PositionComponent
     // one talks at a time: Maxito steps back when Sebastián is chosen
     if (_maxitoFocused) MaxitoController.instance.rest();
     if (StageDirector.sebastianAnim.playing) StageDirector.sebastianAnim.stop();
+    if (StageDirector.duoAnim.playing) StageDirector.duoAnim.cancel();
     if (animator.isFocused) {
       animator.poke();
     } else {

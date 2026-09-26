@@ -1,13 +1,14 @@
 import '../../models/models.dart';
 import 'decay.dart';
 
-/// Las seis cosas lindas que el jugador puede hacer con sus gatitos.
+/// Las cosas lindas que el jugador puede hacer con sus gatitos.
 enum TamagotchiAction {
   ponerMusica,
   servirVino,
   hablar,
   darUnAbrazo,
   jugar,
+  cenar,
   preguntar,
 }
 
@@ -125,6 +126,18 @@ const Map<TamagotchiAction, ActionSpec> catalogoAcciones =
           StatKind.energia: -6,
         },
         conexion: 3,
+      ),
+      TamagotchiAction.cenar: ActionSpec(
+        labelEs: 'Cenar milanesas',
+        descripcionEs: 'Sebas cocina milanesas a la napolitana y comen juntos en el piso.',
+        icono: 'restaurant',
+        deltas: <StatKind, double>{
+          StatKind.energia: 14,
+          StatKind.animo: 7,
+          StatKind.carino: 5,
+          StatKind.social: 4,
+        },
+        conexion: 4,
       ),
       TamagotchiAction.preguntar: ActionSpec(
         labelEs: 'Preguntar',

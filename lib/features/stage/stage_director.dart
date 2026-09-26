@@ -14,31 +14,41 @@ import '../characters/name_tag.dart';
 import '../characters/sebastian/sebastian_character.dart';
 import '../events/dialogues.dart';
 import '../events/models.dart';
+import '../room/room_layout.dart';
 import '../tamagotchi/tamagotchi.dart';
 
 /// Who is on screen, what they play and say: runs the HUD actions (animations,
 /// music, lines, hearts), lets the two chat between themselves now and then,
 /// and keeps the Tamagotchi stats drifting.
 class StageDirector extends Component with HasGameReference<DosGatitosGame> {
-  StageDirector() : super(priority: 20); // bubbles and hearts above everyone
+  StageDirector() : super(priority: 20); // duo scenes, bubbles and hearts above everyone
 
   /// The characters register themselves here on load.
   static PositionComponent? sebastian;
   static PositionComponent? maxito;
 
-  /// Frame animations currently replacing the idle sprites.
+  /// Frame animations currently replacing the idle sprites. While [duoAnim]
+  /// plays, both idle characters are hidden and the pair is drawn here.
   static final FramePlayer sebastianAnim = FramePlayer();
   static final FramePlayer maxitoAnim = FramePlayer();
+  static final FramePlayer duoAnim = FramePlayer();
 
   static StageDirector? _instance;
   static StageDirector? get instance => _instance;
 
   FrameAnimData? _dance;
   FrameAnimData? _record;
+  FrameAnimData? _cook;
+  FrameAnimData? _toast;
+  FrameAnimData? _cushions;
+  FrameAnimData? _dinner;
 
   final _rnd = math.Random();
   final List<_Bubble> _bubbles = [];
   final List<_Heart> _hearts = [];
+  final NameTag _sebTag = NameTag('Sebastián', accent: const Color(0xFF8EC5FF));
+  final NameTag _maxTag = NameTag('Maxito', accent: const Color(0xFFFF9A4D));
+  final ui.Paint _duoPaint = ui.Paint()..filterQuality = ui.FilterQuality.medium;
   double _clock = 0;
   double _nextChat = 18;
   double _driftAcc = 0;
@@ -46,8 +56,23 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
   @override
   Future<void> onLoad() async {
     _instance = this;
-    _dance = await FrameAnimData.load('assets/characters/sebastian/anim', 'dance');
-    _record = await FrameAnimData.load('assets/characters/maxito/anim', 'record');
+    const seb = 'assets/characters/sebastian/anim';
+    const max = 'assets/characters/maxito/anim';
+    const duo = 'assets/characters/duo/anim';
+    final loaded = await Future.wait([
+      FrameAnimData.load(seb, 'dance'),
+      FrameAnimData.load(max, 'record'),
+      FrameAnimData.load(seb, 'cook'),
+      FrameAnimData.load(duo, 'toast'),
+      FrameAnimData.load(duo, 'cushions'),
+      FrameAnimData.load(duo, 'dinner'),
+    ]);
+    _dance = loaded[0];
+    _record = loaded[1];
+    _cook = loaded[2];
+    _toast = loaded[3];
+    _cushions = loaded[4];
+    _dinner = loaded[5];
   }
 
   @override
@@ -57,7 +82,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
   }
 
   bool get _someoneFocused => Sebastian.isFocused || MaxitoController.instance.state.isCloseUp;
-  bool get _busy => sebastianAnim.playing || maxitoAnim.playing || _bubbles.isNotEmpty;
+  bool get _busy => sebastianAnim.playing || maxitoAnim.playing || duoAnim.playing || _bubbles.isNotEmpty;
 
   // ---------------------------------------------------------------------------
   // HUD actions
@@ -72,15 +97,21 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
       case TamagotchiAction.ponerMusica:
         _musicTime();
       case TamagotchiAction.servirVino:
+        _stopAll();
+        duoAnim.play(_toast);
         _pair(_pick(_wineSeb), _pick(_wineMax), first: LineSpeaker.sebastian);
-        _burst(3);
+        _burst(4, delay: 2.2);
       case TamagotchiAction.hablar:
-        startChat();
+        _stopAll();
+        final seconds = startChat();
+        duoAnim.play(_cushions, seconds: seconds + 0.5);
       case TamagotchiAction.darUnAbrazo:
         _pair(_pick(_hugMax), _pick(_hugSeb), first: LineSpeaker.maxito);
         _burst(9);
       case TamagotchiAction.jugar:
         _pair(_pick(_playMax), _pick(_playSeb), first: LineSpeaker.maxito);
+      case TamagotchiAction.cenar:
+        _dinnerTime();
       case TamagotchiAction.preguntar:
         break; // the HUD opens the question flow
     }
@@ -89,7 +120,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
 
   /// Maxito puts a record on, the dance track starts and Sebastián dances.
   void _musicTime() {
-    _release();
+    _stopAll();
     Music.instance.start();
     maxitoAnim.play(_record, onDone: () {
       Music.instance.play('baile');
@@ -98,9 +129,26 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     });
   }
 
-  void _release() {
+  /// Sebastián makes milanesas a la napolitana, then they eat them together.
+  void _dinnerTime() {
+    _stopAll();
+    say(LineSpeaker.maxito, _pick(const ['¿Milanesas? ¡Te amo!', '¡Qué rico huele, Sebas!', 'Yo pongo la mesa.']));
+    say(LineSpeaker.sebastian, _pick(const ['Receta de mi vieja, no se discute.', 'A la napolitana, como en Buenos Aires.']), delay: 3.2);
+    sebastianAnim.play(_cook, onDone: () {
+      duoAnim.play(_dinner);
+      say(LineSpeaker.sebastian, _pick(const ['¡A comer!', 'Con limón, obvio.', 'Las mejores milanesas de Barcelona.']));
+      say(LineSpeaker.maxito, _pick(const ['Mmm… casate conmigo otra vez.', 'Dame un bocado del tuyo.', 'Esto es mejor que cualquier restaurante.']), delay: 3);
+      _burst(5, delay: 6);
+    });
+  }
+
+  void _stopAll() {
     if (Sebastian.isFocused) Sebastian.exitDialogue();
     if (MaxitoController.instance.state.isCloseUp) MaxitoController.instance.rest();
+    sebastianAnim.cancel();
+    maxitoAnim.cancel();
+    duoAnim.cancel();
+    if (Music.instance.track == 'baile') Music.instance.play('casa'); // the dance was cut short
   }
 
   // ---------------------------------------------------------------------------
@@ -108,18 +156,23 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
   // ---------------------------------------------------------------------------
 
   /// A joint conversation from the events catalogue (R18), line by line.
-  void startChat([JointDialogue? dialogue]) {
+  /// Returns how long it lasts (seconds).
+  double startChat([JointDialogue? dialogue]) {
     final d = dialogue ?? kJointDialogues[_rnd.nextInt(kJointDialogues.length)];
-    var at = _clock + 0.3;
+    final begin = _clock + 0.3;
+    var at = begin;
+    var last = begin;
     double? prevDur;
     for (final line in d.lines) {
       if (line.speaker == LineSpeaker.ambiente) continue;
       final dur = _durationOf(line.text);
       if (prevDur != null && line.interruptsPrevious) at -= prevDur * 0.4; // cuts in
       _bubbles.add(_Bubble(line.speaker, line.text, start: at, end: at + dur));
+      last = math.max(last, at + dur);
       at += dur + 0.35;
       prevDur = dur;
     }
+    return last - _clock;
   }
 
   void say(LineSpeaker who, String text, {double delay = 0}) {
@@ -137,19 +190,55 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
 
   String _pick(List<String> options) => options[_rnd.nextInt(options.length)];
 
-  void _burst(int n) {
-    final a = sebastian, b = maxito;
+  void _burst(int n, {double delay = 0}) {
+    final a = _headOf(LineSpeaker.sebastian), b = _headOf(LineSpeaker.maxito);
     if (a == null || b == null) return;
-    final x = (a.position.x + b.position.x) / 2;
-    final y = math.min(a.position.y - a.size.y, b.position.y - b.size.y) + 40;
+    final x = (a.dx + b.dx) / 2;
+    final y = math.min(a.dy, b.dy) + 60;
     for (var i = 0; i < n; i++) {
       _hearts.add(_Heart(
-        Offset(x + (_rnd.nextDouble() - 0.5) * 90, y + _rnd.nextDouble() * 60),
-        born: _clock + i * 0.12,
+        ui.Offset(x + (_rnd.nextDouble() - 0.5) * 90, y + _rnd.nextDouble() * 60),
+        born: _clock + delay + i * 0.12,
         size: 7 + _rnd.nextDouble() * 6,
         drift: (_rnd.nextDouble() - 0.5) * 30,
       ));
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // where things are on screen
+  // ---------------------------------------------------------------------------
+
+  /// The pair frame of the current duo animation: where it lands and its scale.
+  ({ui.Rect dst, double k})? _duoPlacement() {
+    final frame = duoAnim.frame;
+    final data = duoAnim.data;
+    if (frame == null || data == null) return null;
+    final view = game.size;
+    final room = RoomLayout(canvas: ui.Size(view.x, view.y));
+    final h = (view.y * 0.52).clamp(120.0, 640.0); // same height as the idle characters
+    final feet = room.floorLineY.clamp(h * 0.6, view.y - 6.0);
+    var k = h / data.refHeight;
+    k = math.min(k, (view.x - 12) / frame.width); // a wide sitting scene never leaves the screen
+    final mid = room.toCanvas(const ui.Offset(0.5, 0)).dx.clamp(frame.width * k / 2 + 6, view.x - frame.width * k / 2 - 6);
+    return (
+      dst: ui.Rect.fromLTWH(mid - data.centerX * k, feet - data.feetY * k, frame.width * k, frame.height * k),
+      k: k,
+    );
+  }
+
+  /// Top of a character's head right now (duo frame, or the character itself).
+  ui.Offset? _headOf(LineSpeaker who) {
+    final duo = duoAnim.data;
+    final placed = _duoPlacement();
+    if (duo != null && placed != null && duo.duoHeads.isNotEmpty) {
+      final heads = duo.duoHeads[duoAnim.frameIndex.clamp(0, duo.duoHeads.length - 1)];
+      final h = heads[who == LineSpeaker.sebastian ? 0 : 1];
+      return placed.dst.topLeft + h * placed.k;
+    }
+    final c = who == LineSpeaker.sebastian ? sebastian : maxito;
+    if (c == null) return null;
+    return ui.Offset(c.position.x, c.position.y - c.size.y * c.scale.y);
   }
 
   // ---------------------------------------------------------------------------
@@ -158,15 +247,21 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
 
   @override
   void update(double dt) {
+    // after the app was in the background the first frame brings a huge dt: lines and
+    // hearts continue where they were instead of vanishing (animations clamp the same way)
+    dt = dt.clamp(0.0, 0.1);
     _clock += dt;
     sebastianAnim.update(dt);
     maxitoAnim.update(dt);
+    duoAnim.update(dt);
     _bubbles.removeWhere((b) => _clock > b.end);
     _hearts.removeWhere((h) => _clock > h.born + 1.8);
 
-    // they chat by themselves now and then, when nothing else is going on
+    // they chat by themselves now and then, when nothing else is going on —
+    // every other time sitting on the floor cushions
     if (_clock > _nextChat && !_busy && !_someoneFocused) {
-      startChat();
+      final seconds = startChat();
+      if (_rnd.nextBool()) duoAnim.play(_cushions, seconds: seconds + 0.5);
       _nextChat = _clock + 35 + _rnd.nextDouble() * 25;
     }
 
@@ -180,15 +275,28 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
 
   @override
   void render(ui.Canvas canvas) {
+    final placed = _duoPlacement();
+    final frame = duoAnim.frame;
+    if (placed != null && frame != null) {
+      canvas.drawImageRect(
+        frame,
+        ui.Rect.fromLTWH(0, 0, frame.width.toDouble(), frame.height.toDouble()),
+        placed.dst,
+        _duoPaint,
+      );
+      for (final (who, tag) in [(LineSpeaker.sebastian, _sebTag), (LineSpeaker.maxito, _maxTag)]) {
+        final head = _headOf(who);
+        if (head != null) tag.paint(canvas, head - const ui.Offset(0, 4));
+      }
+    }
     for (final h in _hearts) {
       h.paint(canvas, _clock);
     }
-    final placed = <ui.Rect>[];
+    final rects = <ui.Rect>[];
     for (final b in _bubbles.where((b) => _clock >= b.start)) {
-      final who = b.speaker == LineSpeaker.sebastian ? sebastian : maxito;
-      if (who == null) continue;
-      final head = ui.Offset(who.position.x, who.position.y - who.size.y * who.scale.y);
-      placed.add(b.paint(canvas, head, game.size.x, placed, _clock));
+      final head = _headOf(b.speaker);
+      if (head == null) continue;
+      rects.add(b.paint(canvas, head, game.size.x, rects, _clock));
     }
   }
 
@@ -230,8 +338,8 @@ class _Bubble {
     )..layout(maxWidth: 170);
     final w = tp.width + 20;
     final h = tp.height + 16;
-    var cx = head.dx.clamp(w / 2 + 6, screenW - w / 2 - 6);
-    var rect = ui.Rect.fromLTWH(cx - w / 2, head.dy - 40 - h, w, h);
+    final cx = head.dx.clamp(w / 2 + 6, screenW - w / 2 - 6);
+    var rect = ui.Rect.fromLTWH(cx - w / 2, head.dy - 36 - h, w, h);
     // two lines at once (one cuts in): stack them instead of overlapping
     for (final other in placed) {
       if (rect.overlaps(other)) rect = rect.shift(ui.Offset(0, other.top - rect.bottom - 8));
@@ -277,7 +385,7 @@ class _Heart {
     final k = (t / 1.8).clamp(0.0, 1.0);
     final c = origin + ui.Offset(drift * k + math.sin(t * 5) * 4, -90 * k);
     final s = size;
-    // a pixel heart: two squares and a diamond
+    // a pixel heart: two squares and a triangle
     final paint = ui.Paint()..color = ui.Color.fromRGBO(255, 92, 138, 1 - k);
     canvas.drawRect(ui.Rect.fromLTWH(c.dx - s, c.dy - s * 0.6, s, s), paint);
     canvas.drawRect(ui.Rect.fromLTWH(c.dx, c.dy - s * 0.6, s, s), paint);

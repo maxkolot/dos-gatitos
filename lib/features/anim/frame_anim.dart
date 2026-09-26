@@ -17,6 +17,7 @@ class FrameAnimData {
     required this.feetY,
     required this.centerX,
     this.heads = const [],
+    this.duoHeads = const [],
   });
 
   final List<ui.Image> frames;
@@ -33,6 +34,9 @@ class FrameAnimData {
 
   /// Top of the head per frame (frame pixels) — the name tag rides on it.
   final List<ui.Offset> heads;
+
+  /// Duo scenes: [Sebastián's head, Maxito's head] per frame (frame pixels).
+  final List<List<ui.Offset>> duoHeads;
 
   /// Head top of frame [i] inside the idle sprite box (see [paintAnimFrame]).
   ui.Offset? headInBox(int i, double boxWidth, double boxHeight) {
@@ -68,6 +72,13 @@ class FrameAnimData {
           for (final p in (meta['heads'] as List? ?? const []))
             ui.Offset(((p as List)[0] as num).toDouble(), (p[1] as num).toDouble()),
         ],
+        duoHeads: [
+          for (final pair in (meta['duoHeads'] as List? ?? const []))
+            [
+              for (final p in pair as List)
+                ui.Offset(((p as List)[0] as num).toDouble(), (p[1] as num).toDouble()),
+            ],
+        ],
       );
     } catch (e) {
       debugPrint('FrameAnimData: cannot load $dir/$name ($e)');
@@ -97,6 +108,12 @@ class FramePlayer {
     _t = 0;
     _limit = seconds ?? (data.loop ? double.infinity : data.oneShotSeconds);
     _onDone = onDone;
+  }
+
+  /// Stops without running the follow-up (another action took over the stage).
+  void cancel() {
+    _data = null;
+    _onDone = null;
   }
 
   void stop() {

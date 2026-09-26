@@ -39,6 +39,7 @@ dependencies:
   google_fonts: ^8.2.1
   audioplayers: ^6.8.1
   web: ^1.1.1
+  video_player: ^2.14.0
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +63,7 @@ flutter:
     - assets/characters/sebastian/
     - assets/characters/sebastian/anim/
     - assets/characters/maxito/anim/
+    - assets/characters/duo/anim/
     - assets/audio/
     - assets/splash/
     - assets/characters/maxito/

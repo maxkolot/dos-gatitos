@@ -234,6 +234,7 @@ class _ActionBar extends StatelessWidget {
     (TamagotchiAction.hablar, Icons.forum_rounded, 'Hablar'),
     (TamagotchiAction.darUnAbrazo, Icons.favorite_rounded, 'Abrazo'),
     (TamagotchiAction.jugar, Icons.toys_rounded, 'Jugar'),
+    (TamagotchiAction.cenar, Icons.restaurant_rounded, 'Cenar'),
     (TamagotchiAction.preguntar, Icons.help_rounded, 'Preguntar'),
   ];
 
@@ -263,8 +264,8 @@ class _ActionBar extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          width: 40,
-                          height: 40,
+                          width: 38,
+                          height: 38,
                           decoration: BoxDecoration(
                             color: const Color(0xFF45284D),
                             borderRadius: BorderRadius.circular(9),
@@ -273,7 +274,7 @@ class _ActionBar extends StatelessWidget {
                           child: Icon(icon, color: _cream, size: 22),
                         ),
                         const SizedBox(height: 3),
-                        Text(label, style: _px(10.5), maxLines: 1, overflow: TextOverflow.fade, softWrap: false),
+                        Text(label, style: _px(10), maxLines: 1, overflow: TextOverflow.fade, softWrap: false),
                       ],
                     ),
                   ),

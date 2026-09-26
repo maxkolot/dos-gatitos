@@ -5,8 +5,8 @@ void main() {
   final base = DateTime(2026, 5, 1, 20);
 
   group('catálogo de acciones', () {
-    test('las seis acciones están definidas, en español y con icono', () {
-      expect(TamagotchiAction.values.length, 6);
+    test('las siete acciones están definidas, en español y con icono', () {
+      expect(TamagotchiAction.values.length, 7);
       expect(catalogoAcciones.length, TamagotchiAction.values.length);
 
       for (final accion in TamagotchiAction.values) {
@@ -27,6 +27,7 @@ void main() {
           'Hablar',
           'Dar un abrazo',
           'Jugar',
+          'Cenar milanesas',
           'Preguntar',
         ],
       );
@@ -37,6 +38,11 @@ void main() {
         final spec = specDe(accion);
         for (final entrada in spec.deltas.entries) {
           if (entrada.key.esGasto) {
+            // la única que devuelve energía: comer (Sebas cocina milanesas)
+            if (accion == TamagotchiAction.cenar) {
+              expect(entrada.value, greaterThan(0), reason: 'cenar recupera energía');
+              continue;
+            }
             expect(
               entrada.value,
               lessThanOrEqualTo(0),

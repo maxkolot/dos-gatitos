@@ -42,6 +42,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
   FrameAnimData? _toast;
   FrameAnimData? _cushions;
   FrameAnimData? _dinner;
+  FrameAnimData? _hug;
 
   final _rnd = math.Random();
   final List<_Bubble> _bubbles = [];
@@ -66,6 +67,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
       FrameAnimData.load(duo, 'toast'),
       FrameAnimData.load(duo, 'cushions'),
       FrameAnimData.load(duo, 'dinner'),
+      FrameAnimData.load(duo, 'hug'),
     ]);
     _dance = loaded[0];
     _record = loaded[1];
@@ -73,6 +75,7 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
     _toast = loaded[3];
     _cushions = loaded[4];
     _dinner = loaded[5];
+    _hug = loaded[6];
   }
 
   @override
@@ -106,8 +109,10 @@ class StageDirector extends Component with HasGameReference<DosGatitosGame> {
         final seconds = startChat();
         duoAnim.play(_cushions, seconds: seconds + 0.5);
       case TamagotchiAction.darUnAbrazo:
+        _stopAll();
+        duoAnim.play(_hug);
         _pair(_pick(_hugMax), _pick(_hugSeb), first: LineSpeaker.maxito);
-        _burst(9);
+        _burst(9, delay: 2.4); // when the hug gets tight
       case TamagotchiAction.jugar:
         _pair(_pick(_playMax), _pick(_playSeb), first: LineSpeaker.maxito);
       case TamagotchiAction.cenar:

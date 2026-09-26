@@ -107,9 +107,12 @@ class _GameHudState extends State<GameHud> {
 
   @override
   Widget build(BuildContext context) {
+    // the header sits a bit into the top safe area (still clear of the notch / island)
+    final top = MediaQuery.viewPaddingOf(context).top;
     return SafeArea(
+      top: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
+        padding: EdgeInsets.fromLTRB(8, top > 0 ? top - 14 : 4, 8, 8),
         child: ListenableBuilder(
           listenable: tamagotchi,
           builder: (context, _) => Column(

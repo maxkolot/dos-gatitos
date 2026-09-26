@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 
 import '../../../game.dart';
 import '../../room/room_layout.dart';
+import '../maxito/maxito_state.dart';
+import '../name_tag.dart';
 import 'sebastian_animation.dart';
 
 export 'sebastian_animation.dart';
@@ -35,6 +37,13 @@ class SebastianCharacter extends PositionComponent
   static const double eyeLine = 0.11;
 
   double _aspect = 0.33;
+
+  /// 0 = at his spot, 1 = stepped aside to the left edge while Maxito talks.
+  double _aside = 0;
+
+  final NameTag _tag = NameTag('Sebastián', accent: const Color(0xFF8EC5FF));
+
+  bool get _maxitoFocused => MaxitoController.instance.state.isCloseUp;
 
   double get characterHeight => (game.size.y * heightFraction).clamp(120.0, 640.0);
 
@@ -104,17 +113,23 @@ class SebastianCharacter extends PositionComponent
     final canvas = Size(game.size.x, game.size.y);
     final room = RoomLayout(canvas: canvas);
     final feet = room.floorLineY.clamp(characterHeight, game.size.y - 6.0);
-    return Vector2(room.toCanvas(const Offset(0.35, 0)).dx, feet);
+    final spot = room.toCanvas(const Offset(0.35, 0)).dx;
+    // while Maxito is in front of the camera he waits at the left edge, still tappable
+    final aside = game.size.x * 0.12;
+    return Vector2(spot + (aside - spot) * _aside, feet);
   }
 
   /// Where he stands while talking to the player: centred and low, so the
   /// close-up puts his face right in front of the camera.
+  /// A bit left of centre, so Maxito, stepped aside to the right, stays tappable.
   Vector2 get _closeUpPosition =>
-      Vector2(game.size.x / 2, game.size.y * 0.74);
+      Vector2(game.size.x * 0.42, game.size.y * 0.74);
 
   @override
   void update(double dt) {
     size.setValues(characterHeight * _aspect, characterHeight); // follows rotation / resize
+    final asideTarget = _maxitoFocused && !animator.isFocused ? 1.0 : 0.0;
+    _aside += (asideTarget - _aside) * (dt * 7).clamp(0.0, 1.0);
     animator.update(dt);
     final pose = animator.pose;
 
@@ -162,6 +177,14 @@ class SebastianCharacter extends PositionComponent
       _paint(canvas, blink, 1 - pose.eyeOpen);
     }
     canvas.restore();
+    _paintTag(canvas);
+  }
+
+  void _paintTag(Canvas canvas) {
+    // hidden while he is in the close-up
+    final zoom = animator.pose.zoom;
+    final opacity = (1 - (zoom - 1) * 4).clamp(0.0, 1.0);
+    _tag.paint(canvas, Offset(size.x / 2, -4), opacity: opacity);
   }
 
   void _paint(Canvas canvas, Sprite sprite, double opacity) {
@@ -179,6 +202,8 @@ class SebastianCharacter extends PositionComponent
 
   @override
   void onTapDown(TapDownEvent event) {
+    // one talks at a time: Maxito steps back when Sebastián is chosen
+    if (_maxitoFocused) MaxitoController.instance.rest();
     if (animator.isFocused) {
       animator.poke();
     } else {

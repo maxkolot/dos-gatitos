@@ -40,7 +40,7 @@ void main() {
     expect(MaxitoController.instance.zoom, greaterThan(0.9),
         reason: 'zoom-in finishes inside ~400 ms');
     expect(maxito.scale.x, greaterThan(1.8));
-    expect(maxito.position.x, closeTo(game.size.x / 2, 2));
+    expect(maxito.position.x, closeTo(game.size.x * 0.58, 2)); // right of centre: Sebastián stays tappable
     expect(MaxitoController.instance.headSize, greaterThan(0));
 
     // bubble follows his head

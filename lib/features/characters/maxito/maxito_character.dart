@@ -8,6 +8,8 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import '../../../game.dart';
 import '../../room/room_layout.dart';
+import '../name_tag.dart';
+import '../sebastian/sebastian_character.dart';
 import 'maxito_blink.dart';
 import 'maxito_state.dart';
 
@@ -75,6 +77,11 @@ class MaxitoCharacter extends PositionComponent
   double _lid = 0;
 
   final _paint = ui.Paint()..filterQuality = ui.FilterQuality.medium;
+
+  /// 0 = at his spot, 1 = stepped aside to the right edge while Sebastián talks.
+  double _aside = 0;
+
+  final NameTag _tag = NameTag('Maxito', accent: const ui.Color(0xFFFF9A4D));
   final _lashPaint = ui.Paint()..color = const ui.Color(0x88241416);
   final _sparkPaint = ui.Paint()..color = const ui.Color(0xFFFFD76B);
 
@@ -144,9 +151,13 @@ class MaxitoCharacter extends PositionComponent
 
     final room = RoomLayout(canvas: ui.Size(view.x, view.y));
     final feet = room.floorLineY.clamp(height, view.y - 6.0);
-    final home = Vector2(room.toCanvas(const ui.Offset(0.65, 0)).dx, feet);
-    // close-up: scaled around the feet, so they go below the screen and the face comes up front
-    final close = Vector2(view.x * 0.50, view.y + height * 0.40);
+    final asideTarget = Sebastian.isFocused && !controller.state.isCloseUp ? 1.0 : 0.0;
+    _aside += (asideTarget - _aside) * (dt * 7).clamp(0.0, 1.0);
+    final spot = room.toCanvas(const ui.Offset(0.65, 0)).dx;
+    // while Sebastián is in front of the camera he waits at the right edge, still tappable
+    final home = Vector2(spot + (view.x * 0.88 - spot) * _aside, feet);
+    // close-up: scaled around the feet, a bit right of centre so Sebastián stays tappable at the left
+    final close = Vector2(view.x * 0.58, view.y + height * 0.40);
     final target = controller.state.isCloseUp ? 1.0 : 0.0;
     final step = dt * (target > _zoom ? 1 / zoomInSeconds : 1 / zoomOutSeconds);
     _zoom = target > _zoom ? min(target, _zoom + step) : max(target, _zoom - step);
@@ -201,6 +212,8 @@ class MaxitoCharacter extends PositionComponent
 
   @override
   void onTapUp(TapUpEvent event) {
+    // one talks at a time: Sebastián steps back when Maxito is chosen
+    if (Sebastian.isFocused) Sebastian.exitDialogue();
     if (controller.state == MaxitoState.sleepy) controller.wake();
     controller.focus();
     _blink.blinkNow();
@@ -235,6 +248,8 @@ class MaxitoCharacter extends PositionComponent
     if (controller.state == MaxitoState.playful) {
       _drawSparkles(canvas, w, h);
     }
+    // his name, hidden while he is in the close-up
+    _tag.paint(canvas, ui.Offset(w / 2, -4), opacity: (1 - _zoom * 4).clamp(0.0, 1.0));
   }
 
   /// Closes the eyes with the skin band right above each eye, squashed over it.

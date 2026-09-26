@@ -37,6 +37,7 @@ dependencies:
   shared_preferences: ^2.3.2
   flame: ^1.38.2
   google_fonts: ^8.2.1
+  audioplayers: ^6.8.1
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +59,9 @@ flutter:
     - app.json
     - assets/content/
     - assets/characters/sebastian/
+    - assets/characters/sebastian/anim/
+    - assets/characters/maxito/anim/
+    - assets/audio/
     - assets/characters/maxito/
     - assets/room/
 

@@ -1,0 +1,20 @@
+{
+  "frames": [
+    "dance_1.webp",
+    "dance_2.webp",
+    "dance_3.webp",
+    "dance_4.webp",
+    "dance_5.webp",
+    "dance_6.webp",
+    "dance_7.webp",
+    "dance_8.webp"
+  ],
+  "fps": 5.0,
+  "loop": true,
+  "hold": 1.5,
+  "width": 680,
+  "height": 1022,
+  "refHeight": 1000.0,
+  "feetY": 1005.4,
+  "centerX": 342.0
+}

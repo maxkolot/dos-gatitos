@@ -9,6 +9,8 @@ import 'package:flutter/services.dart' show rootBundle;
 import '../../../game.dart';
 import '../../room/room_layout.dart';
 import '../name_tag.dart';
+import '../../anim/frame_anim.dart';
+import '../../stage/stage_director.dart';
 import '../sebastian/sebastian_character.dart';
 import 'maxito_blink.dart';
 import 'maxito_state.dart';
@@ -81,6 +83,9 @@ class MaxitoCharacter extends PositionComponent
   /// 0 = at his spot, 1 = stepped aside to the right edge while Sebastián talks.
   double _aside = 0;
 
+  /// Sideways shift while an action animation carries props (the record cabinet) past the screen edge.
+  double _animShift = 0;
+
   final NameTag _tag = NameTag('Maxito', accent: const ui.Color(0xFFFF9A4D));
   final _lashPaint = ui.Paint()..color = const ui.Color(0x88241416);
   final _sparkPaint = ui.Paint()..color = const ui.Color(0xFFFFD76B);
@@ -100,7 +105,14 @@ class MaxitoCharacter extends PositionComponent
     priority = 5; // over the room, under the HUD
     size = Vector2.all(200);
     _image = await _decode(assetPath);
+    StageDirector.maxito = this;
     if (debugStateFromUrl) _applyDebugState();
+  }
+
+  @override
+  void onRemove() {
+    if (identical(StageDirector.maxito, this)) StageDirector.maxito = null;
+    super.onRemove();
   }
 
   static Future<ui.Image> _decode(String path) async {
@@ -181,6 +193,18 @@ class MaxitoCharacter extends PositionComponent
       _lid = max(_blink.closedAmount, controller.state.restingLid);
     }
 
+    // keep a whole action frame on screen: slide left while its props would stick out on the right
+    var shiftTarget = 0.0;
+    final anim = StageDirector.maxitoAnim;
+    final data = anim.data;
+    if (anim.playing && data != null && data.frames.isNotEmpty) {
+      final k = size.y / data.refHeight;
+      final right = position.x + (data.frames.first.width - data.centerX) * k;
+      // at most 50 px: Sebastián makes room on the left, the last sleeves may stay cut
+      if (right > view.x - 4) shiftTarget = max(view.x - 4 - right, -50.0);
+    }
+    _animShift += (shiftTarget - _animShift) * (dt * 6).clamp(0.0, 1.0);
+
     controller.headX = position.x;
     controller.headY = position.y - size.y * (1 - neckLine) * scale.y;
     controller.headSize = size.y * neckLine * scale.y;
@@ -214,6 +238,7 @@ class MaxitoCharacter extends PositionComponent
   void onTapUp(TapUpEvent event) {
     // one talks at a time: Sebastián steps back when Maxito is chosen
     if (Sebastian.isFocused) Sebastian.exitDialogue();
+    if (StageDirector.maxitoAnim.playing) StageDirector.maxitoAnim.stop();
     if (controller.state == MaxitoState.sleepy) controller.wake();
     controller.focus();
     _blink.blinkNow();
@@ -225,6 +250,17 @@ class MaxitoCharacter extends PositionComponent
     if (img == null) return;
     final w = size.x;
     final h = size.y;
+    // an action animation (the record player…) replaces the idle sprite while it plays
+    final anim = StageDirector.maxitoAnim;
+    final frame = anim.frame;
+    if (frame != null && !controller.state.isCloseUp) {
+      canvas.save();
+      canvas.translate(_animShift, 0);
+      paintAnimFrame(canvas, frame, anim.data!, w, h, _paint);
+      _tag.paint(canvas, ui.Offset(w / 2, -4));
+      canvas.restore();
+      return;
+    }
     final sx = img.width / w;
     final sy = img.height / h;
 

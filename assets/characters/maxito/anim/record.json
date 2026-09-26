@@ -1,0 +1,17 @@
+{
+  "frames": [
+    "record_1.webp",
+    "record_2.webp",
+    "record_3.webp",
+    "record_4.webp",
+    "record_5.webp"
+  ],
+  "fps": 3.0,
+  "loop": false,
+  "hold": 2.5,
+  "width": 690,
+  "height": 1035,
+  "refHeight": 1000.0,
+  "feetY": 1008.1,
+  "centerX": 271.3
+}

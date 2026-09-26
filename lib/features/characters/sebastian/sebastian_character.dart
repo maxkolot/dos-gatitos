@@ -8,6 +8,8 @@ import '../../../game.dart';
 import '../../room/room_layout.dart';
 import '../maxito/maxito_state.dart';
 import '../name_tag.dart';
+import '../../anim/frame_anim.dart';
+import '../../stage/stage_director.dart';
 import 'sebastian_animation.dart';
 
 export 'sebastian_animation.dart';
@@ -44,6 +46,8 @@ class SebastianCharacter extends PositionComponent
   final NameTag _tag = NameTag('Sebastián', accent: const Color(0xFF8EC5FF));
 
   bool get _maxitoFocused => MaxitoController.instance.state.isCloseUp;
+
+  final Paint _animPaint = Paint()..filterQuality = FilterQuality.medium;
 
   double get characterHeight => (game.size.y * heightFraction).clamp(120.0, 640.0);
 
@@ -98,11 +102,13 @@ class SebastianCharacter extends PositionComponent
 
     position = _basePosition;
     Sebastian.attach(animator);
+    StageDirector.sebastian = this;
   }
 
   @override
   void onRemove() {
     Sebastian.detach(animator);
+    if (identical(StageDirector.sebastian, this)) StageDirector.sebastian = null;
     super.onRemove();
   }
 
@@ -128,7 +134,12 @@ class SebastianCharacter extends PositionComponent
   @override
   void update(double dt) {
     size.setValues(characterHeight * _aspect, characterHeight); // follows rotation / resize
-    final asideTarget = _maxitoFocused && !animator.isFocused ? 1.0 : 0.0;
+    // Maxito in the close-up: step aside; Maxito busy at the record player: make room halfway
+    final asideTarget = _maxitoFocused && !animator.isFocused
+        ? 1.0
+        : StageDirector.maxitoAnim.playing
+            ? 0.5
+            : 0.0;
     _aside += (asideTarget - _aside) * (dt * 7).clamp(0.0, 1.0);
     animator.update(dt);
     final pose = animator.pose;
@@ -158,6 +169,14 @@ class SebastianCharacter extends PositionComponent
   void render(Canvas canvas) {
     final sprite = _sprite;
     if (sprite == null) return;
+    // an action animation (dance…) replaces the idle sprite while it plays
+    final anim = StageDirector.sebastianAnim;
+    final frame = anim.frame;
+    if (frame != null && !animator.isFocused) {
+      paintAnimFrame(canvas, frame, anim.data!, size.x, size.y, _animPaint);
+      _paintTag(canvas);
+      return;
+    }
     final pose = animator.pose;
 
     // Scale around the eye line: he grows towards the camera the way a face
@@ -204,6 +223,7 @@ class SebastianCharacter extends PositionComponent
   void onTapDown(TapDownEvent event) {
     // one talks at a time: Maxito steps back when Sebastián is chosen
     if (_maxitoFocused) MaxitoController.instance.rest();
+    if (StageDirector.sebastianAnim.playing) StageDirector.sebastianAnim.stop();
     if (animator.isFocused) {
       animator.poke();
     } else {
